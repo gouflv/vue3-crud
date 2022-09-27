@@ -1,0 +1,14 @@
+{
+  "name": "@vue3-crud/core",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "vue",
+    "crud"
+  ],
+  "author": "lv.gouf@gmail.com",
+  "license": "MIT"
+}
