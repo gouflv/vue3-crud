@@ -1,7 +1,12 @@
 {
   "name": "@vue3-crud/core",
   "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
   "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write ."
   },
@@ -10,5 +15,9 @@
     "crud"
   ],
   "author": "lv.gouf@gmail.com",
-  "license": "MIT"
+  "license": "MIT",
+  "peerDependencies": {
+    "axios": "^0.27.0",
+    "vue": "^3.2.0"
+  }
 }
