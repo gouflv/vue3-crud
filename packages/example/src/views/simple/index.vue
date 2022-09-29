@@ -1,7 +1,7 @@
 <template>
   <div>Items: {{ data?.items }}</div>
   <div>Loading: {{ loading }}</div>
-  <div>Page: {{ paginationQuery }}</div>
+  <div>Page: {{ pagination }}</div>
   <div>Search: {{ search }}</div>
   <div>
     <button @click="pageNext">Page next</button>
@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { createListStore } from '@vue3-crud/core'
 
-const { data, loading, paginationQuery, search, actions } = createListStore({
+const { data, loading, pagination, search, actions } = createListStore({
   url: 'mock/users'
 })
 

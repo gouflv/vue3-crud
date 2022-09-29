@@ -186,11 +186,11 @@ export function createListStore<
   }
 
   /**
-   * Merge `value` into `paginationQuery` and re-fetch
+   * Merge `value` into `pagination` and re-fetch
    *
    * value can be `PaginationQuery` or a function that returns `PaginationQuery`
    */
-  function setPaginationQuery(
+  function setPagination(
     value:
       | Partial<PaginationQuery>
       | ReturnValueFn<Partial<PaginationQuery>, PaginationQuery>
@@ -208,7 +208,7 @@ export function createListStore<
     actions: {
       fetch,
       setSearch,
-      setPaginationQuery
+      setPaginationQuery: setPagination
     }
   }
 
