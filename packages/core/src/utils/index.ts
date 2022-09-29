@@ -1,3 +1,5 @@
+export * from './axios-mock'
+
 import { ReturnValueFn } from '../types'
 
 /**
@@ -7,10 +9,7 @@ import { ReturnValueFn } from '../types'
  *
  * Otherwise, it will be returned directly
  */
-export function valueOf<T, P>(
-  valuable: T | ReturnValueFn<T, P>,
-  params?: P
-): T {
+export function valueOf<T, P>(valuable: T | ReturnValueFn<T, P>, params: P): T {
   return typeof valuable === 'function'
     ? (valuable as ReturnValueFn<T, P>)(params)
     : valuable
