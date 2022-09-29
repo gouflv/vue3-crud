@@ -1,23 +1,21 @@
-import { provide, ref, toRefs } from 'vue'
+import { AxiosRequestConfig } from 'axios'
+import { provide, ref } from 'vue'
 import { RequestService } from '../services'
 import {
+  PageData,
   PaginationQuery,
-  PaginationResponseData,
+  PaginationResponse,
+  PlainObject,
+  ResponseWrapper,
   ReturnValueFn
 } from '../types'
 import { valueOf } from '../utils'
 
-type PlainObject = Record<string, string | number | boolean | object>
-
-export function createListStore<
-  TItem extends PlainObject,
-  TSearch extends PlainObject,
-  TInitialParams extends PlainObject
->(options: {
+type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
    * Provide `ListStore` to descendants components by `injection` key
    */
-  injectionKey?: string | Symbol
+  injectionKey?: boolean | string | Symbol
 
   /**
    * Initial params
@@ -36,41 +34,45 @@ export function createListStore<
   /**
    * Return an object that will be used as `params` of `fetch` request
    */
-  getFetchParams?: (state: {
+  getFetchQuery?: (state: {
     initialParams?: TInitialParams
     search: TSearch
     pagination: PaginationQuery
   }) => PlainObject
 
   /**
-   * Transform response data into `PaginationResponse`
+   * Return axios config
    */
-  transformResponse?: (response: any) => PaginationResponseData
+  getFetchConfig?: () => AxiosRequestConfig
 
   /**
-   * Transform `items` of `PaginationResponse` into `TItem`
+   * Transform response data into `PaginationResponse`
    */
-  transformItems?: (items: PaginationResponseData['items']) => TItem[]
-}) {
+  transformResponse?: (response: any) => PaginationResponse<TItem>
+
+  /**
+   * Transform `items` of PaginationResponse into `TItem`
+   */
+  transformItems?: (items: any[]) => TItem[]
+}
+
+export function createListStore<
+  TItem extends PlainObject,
+  TSearch extends PlainObject,
+  TInitialParams extends PlainObject
+>(options: ListStoreOptions<TItem, TSearch, TInitialParams>) {
   const request = new RequestService()
 
   const initialParams = ref<TInitialParams>({} as TInitialParams)
 
   const search = ref<TSearch>({} as TSearch)
 
-  const url = ref<string>()
-
   const paginationQuery = ref<PaginationQuery>({
     page: 0,
     size: 20
   })
 
-  const pageData = ref<{
-    items: TItem[]
-    page: number
-    size: number
-    total: number
-  }>()
+  const data = ref<PageData<TItem>>()
 
   const loading = ref(false)
 
@@ -78,46 +80,43 @@ export function createListStore<
     if (options.initialParams) {
       initialParams.value = options.initialParams()
     }
-
-    url.value = valueOf(options.url, { initialParams: initialParams.value })
   }
 
   async function fetch() {
-    if (!url.value) {
-      throw new Error('`url` is required')
-    }
-
     try {
       loading.value = true
 
-      const res = await request.get(url.value, getFetchParams())
+      const res = await request.get(
+        valueOf(options.url, { initialParams: initialParams.value }),
+        getFetchQuery(),
+        getFetchConfig()
+      )
 
-      const paginationResponse = transformResponse(res.data)
+      const paginationResponse = transformResponse(res)
 
-      pageData.value = {
+      data.value = {
         items: transformItems(paginationResponse.items),
         page: paginationResponse.page,
         size: paginationResponse.size,
         total: paginationResponse.total
       }
-    } catch (error) {
-      // Call MessageService to show error
-      console.error(error)
+    } catch (e) {
+      // Ignore
     } finally {
       loading.value = false
     }
   }
 
   /**
-   * Return fetch params
+   * Return request query data
    *
-   * If `option.getFetchParams` is provided, use it to get fetch params
+   * If `option.getFetchQuery` is provided, use it to get fetch query
    *
-   * Otherwise, return default fetch params that combine `search` and `pagination`
+   * Otherwise, return default fetch query that combine `search` and `pagination`
    */
-  function getFetchParams() {
-    if (options.getFetchParams) {
-      return options.getFetchParams({
+  function getFetchQuery() {
+    if (options.getFetchQuery) {
+      return options.getFetchQuery({
         initialParams: initialParams.value,
         search: search.value,
         pagination: paginationQuery.value
@@ -130,12 +129,22 @@ export function createListStore<
   }
 
   /**
+   * Return request config
+   *
+   * TODO providers abortSignal
+   */
+  function getFetchConfig(): AxiosRequestConfig {
+    return options.getFetchConfig ? options.getFetchConfig() : {}
+  }
+
+  /**
    * Call `options.transformResponse` to transform response data if provided
    *
    * Otherwise, return response data directly
+   *
+   * @param response Pure response json
    */
-  function transformResponse(response: any): PaginationResponseData<unknown> {
-    // TODO call `global.transformResponse` if provided
+  function transformResponse(response: any): PaginationResponse<TItem> {
     if (options.transformResponse) {
       return options.transformResponse(response)
     }
@@ -171,10 +180,8 @@ export function createListStore<
     fetch()
   }
 
-  setup()
-
   const store = {
-    ...toRefs(pageData),
+    pageData: data,
     loading,
     actions: {
       fetch,
@@ -183,9 +190,19 @@ export function createListStore<
     }
   }
 
+  setup()
+
+  const injectionKeyDefault = 'ListStoreInjection'
   if (options.injectionKey) {
-    provide(options.injectionKey, store)
+    provide(
+      typeof options.injectionKey === 'boolean'
+        ? injectionKeyDefault
+        : options.injectionKey,
+      store
+    )
   }
 
   return store
 }
+
+export type CreateListStoreReturn = ReturnType<typeof createListStore>

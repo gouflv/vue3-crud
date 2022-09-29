@@ -16,9 +16,16 @@ export type SortableQuery = {
 }
 
 /**
- * Standard pagination response for ListStore
+ * Standard response of pagination request
  */
-export type PaginationResponseData<T = unknown> = {
+export type PaginationResponse<T = unknown> = {
+  items: T[]
+  page: number
+  size: number
+  total: number
+}
+
+export type PageData<T> = {
   items: T[]
   page: number
   size: number
