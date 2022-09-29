@@ -76,13 +76,25 @@ export function createListStore<
 
   const loading = ref(false)
 
+  const abortController = ref<AbortController>()
+
   function setup() {
     if (options.initialParams) {
       initialParams.value = options.initialParams()
     }
   }
 
+  function beforeFetch() {
+    // Abort previous request and create a new AbortController
+    if (abortController.value) {
+      abortController.value.abort()
+    }
+    abortController.value = new AbortController()
+  }
+
   async function fetch() {
+    beforeFetch()
+
     try {
       loading.value = true
 
@@ -100,8 +112,9 @@ export function createListStore<
         size: paginationResponse.size,
         total: paginationResponse.total
       }
-    } catch (e) {
-      // Ignore
+    } catch (e: any) {
+      if (e.isAxiosError) return
+      console.error(e)
     } finally {
       loading.value = false
     }
@@ -129,12 +142,14 @@ export function createListStore<
   }
 
   /**
-   * Return request config
-   *
-   * TODO providers abortSignal
+   * Merge default fetchConfig and `option.getFetchConfig`
    */
   function getFetchConfig(): AxiosRequestConfig {
-    return options.getFetchConfig ? options.getFetchConfig() : {}
+    const defaults: AxiosRequestConfig = {
+      signal: abortController.value?.signal
+    }
+    const config = options.getFetchConfig ? options.getFetchConfig() : {}
+    return { ...defaults, ...config }
   }
 
   /**
