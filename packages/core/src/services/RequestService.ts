@@ -1,9 +1,13 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios'
+import axiosInstance, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig
+} from 'axios'
 import { ConfigProvider } from '../configuration/provider'
 import { ResponseWrapper, UnwrappedResponse } from '../types'
 
 export class RequestService {
-  constructor() {}
+  constructor(private axios: AxiosInstance = axiosInstance) {}
 
   async request<T>(
     config: AxiosRequestConfig
@@ -13,17 +17,23 @@ export class RequestService {
      */
     const mergeConfig = this.getRequestConfig(config)
 
-    console.debug('Request config', mergeConfig)
+    console.debug('[RequestService] Request config', mergeConfig)
 
     try {
-      const response = await axios.request(mergeConfig)
+      const response = await this.axios.request(mergeConfig)
 
       const normalizedResponse = this.normalizeResponse<T>(response.data)
 
-      return this.unwrapResponse(normalizedResponse)
+      const result = this.unwrapResponse(normalizedResponse)
+
+      console.debug('[RequestService] Response data', result)
+
+      return result
     } catch (e) {
-      console.error(e)
-      this.requestErrorHandler(e as AxiosError)
+      const ex = e as AxiosError
+      this.requestErrorHandler(ex)
+
+      throw e
     }
   }
 
@@ -49,7 +59,7 @@ export class RequestService {
    * May be override in subclass
    */
   getRequestConfig(config: AxiosRequestConfig): AxiosRequestConfig {
-    const defaults = {
+    const defaults: AxiosRequestConfig = {
       baseURL: '/api',
       timeout: 10_000,
       headers: {
@@ -72,22 +82,34 @@ export class RequestService {
     return responseWrapper.data as UnwrappedResponse<T>
   }
 
-  requestErrorHandler(error: AxiosError | Error) {
+  requestErrorHandler(error: AxiosError) {
+    if (error.name === 'CanceledError') {
+      return
+    }
+
     const { messageService } = ConfigProvider.config
 
-    if (axios.isAxiosError(error)) {
+    console.error(error)
+
+    if (error.isAxiosError) {
       const { response, request } = error
       if (response) {
         // The request was made and the server responded with a status code
+
         if (response.status === 401) {
           this.onAuthFailed(error)
           return
         }
+
+        // TODO show error message in response.data
         messageService.open({ type: 'error', content: '服务繁忙' })
       } else if (request) {
         // The request was made but no response was received
+
         messageService.open({ type: 'error', content: '网络异常' })
       } else {
+        // Internal error
+
         messageService.open({ type: 'error', content: error.message })
       }
       return
