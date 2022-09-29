@@ -17,7 +17,7 @@ pnpm install
 Build and run example
 
 ```
-pnpm run dev -r --parallel
+pnpm run -r --parallel dev
 ```
 
 open `http://localhost:5173`
