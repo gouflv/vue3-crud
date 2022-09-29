@@ -10,11 +10,13 @@ import {
 } from '../types'
 import { valueOf } from '../utils'
 
+export const DefaultInjectionKey = 'ListStoreInjection'
+
 type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
    * Provide `ListStore` to descendants components by `injection` key
    */
-  injectionKey?: boolean | string | Symbol
+  injectionKey?: false | string | Symbol
 
   /**
    * Initial params
@@ -214,15 +216,12 @@ export function createListStore<
 
   setup()
 
-  const injectionKeyDefault = 'ListStoreInjection'
-  if (options.injectionKey) {
-    provide(
-      typeof options.injectionKey === 'boolean'
-        ? injectionKeyDefault
-        : options.injectionKey,
-      store
-    )
+  function injection() {
+    if (options.injectionKey === false) return
+    const key = options.injectionKey || DefaultInjectionKey
+    provide(key, store)
   }
+  injection()
 
   return store
 }

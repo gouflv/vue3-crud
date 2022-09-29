@@ -7,10 +7,13 @@
     <button @click="pageNext">Page next</button>
     <button @click="onSearch">Search submit</button>
   </div>
+
+  <Edit />
 </template>
 
 <script setup lang="ts">
 import { createListStore } from '@vue3-crud/core'
+import Edit from './edit.vue'
 
 const { data, loading, pagination, search, actions } = createListStore({
   url: 'mock/users'
