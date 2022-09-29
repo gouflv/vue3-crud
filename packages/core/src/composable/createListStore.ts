@@ -66,7 +66,7 @@ export function createListStore<
 
   const search = ref<TSearch>({} as TSearch)
 
-  const paginationQuery = ref<PaginationQuery>({
+  const pagination = ref<PaginationQuery>({
     page: 0,
     size: 20
   })
@@ -112,8 +112,7 @@ export function createListStore<
         total: paginationResponse.total
       }
     } catch (e: any) {
-      if (e.isAxiosError) return
-      console.error(e)
+      // TODO call `options.onError` if provided
     } finally {
       loading.value = false
     }
@@ -131,12 +130,12 @@ export function createListStore<
       return options.getFetchQuery({
         initialParams: initialParams.value,
         search: search.value,
-        pagination: paginationQuery.value
+        pagination: pagination.value
       })
     }
     return {
       ...search.value,
-      ...paginationQuery.value
+      ...pagination.value
     }
   }
 
@@ -182,30 +181,29 @@ export function createListStore<
    */
   function setSearch(value: Partial<TSearch>) {
     search.value = value
-    paginationQuery.value = {
-      ...paginationQuery.value,
-      page: 0
-    }
+    pagination.value = { ...pagination.value, page: 0 }
     fetch()
   }
 
   /**
    * Merge `value` into `paginationQuery` and re-fetch
+   *
+   * value can be `PaginationQuery` or a function that returns `PaginationQuery`
    */
   function setPaginationQuery(
     value:
       | Partial<PaginationQuery>
       | ReturnValueFn<Partial<PaginationQuery>, PaginationQuery>
   ) {
-    const newValue = valueOf(value, paginationQuery.value)
-    paginationQuery.value = { ...paginationQuery.value, ...newValue }
+    const newValue = valueOf(value, pagination.value)
+    pagination.value = { ...pagination.value, ...newValue }
     fetch()
   }
 
   const store = {
     data,
     loading,
-    paginationQuery,
+    pagination,
     search,
     actions: {
       fetch,
