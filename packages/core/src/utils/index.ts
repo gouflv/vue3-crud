@@ -1,5 +1,3 @@
-export * from './axios-mock'
-
 import { ReturnValueFn } from '../types'
 
 /**
