@@ -6,7 +6,6 @@ import {
   PaginationQuery,
   PaginationResponse,
   PlainObject,
-  ResponseWrapper,
   ReturnValueFn
 } from '../types'
 import { valueOf } from '../utils'
@@ -183,21 +182,31 @@ export function createListStore<
    */
   function setSearch(value: Partial<TSearch>) {
     search.value = value
-    setPaginationQuery({ page: 0 })
+    paginationQuery.value = {
+      ...paginationQuery.value,
+      page: 0
+    }
     fetch()
   }
 
   /**
    * Merge `value` into `paginationQuery` and re-fetch
    */
-  function setPaginationQuery(value: Partial<PaginationQuery>) {
-    paginationQuery.value = { ...paginationQuery.value, ...value }
+  function setPaginationQuery(
+    value:
+      | Partial<PaginationQuery>
+      | ReturnValueFn<Partial<PaginationQuery>, PaginationQuery>
+  ) {
+    const newValue = valueOf(value, paginationQuery.value)
+    paginationQuery.value = { ...paginationQuery.value, ...newValue }
     fetch()
   }
 
   const store = {
-    pageData: data,
+    data,
     loading,
+    paginationQuery,
+    search,
     actions: {
       fetch,
       setSearch,
