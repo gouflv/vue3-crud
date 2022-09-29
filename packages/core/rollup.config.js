@@ -5,12 +5,14 @@ export default {
   output: [
     {
       file: 'dist/index.js',
-      format: 'cjs'
+      format: 'cjs',
+      sourcemap: true
     },
     {
       file: 'dist/index.esm.js',
-      format: 'esm'
+      format: 'esm',
+      sourcemap: true
     }
   ],
-  plugins: [typescript()]
+  plugins: [typescript({ sourceMap: false })]
 }
