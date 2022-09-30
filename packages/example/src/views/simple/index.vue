@@ -1,5 +1,5 @@
 <template>
-  <div>Items: {{ data?.items }}</div>
+  <div>Items: {{ data.value.items }}</div>
   <div>Loading: {{ loading }}</div>
   <div>Page: {{ pagination }}</div>
   <div>Search: {{ search }}</div>
