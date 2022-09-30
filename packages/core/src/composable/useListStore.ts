@@ -1,8 +1,11 @@
 import { inject } from 'vue'
-import { CreateListStoreReturn, DefaultInjectionKey } from './createListStore'
+import {
+  CreateListStoreReturn,
+  ListStoreInjectionKeyDefault
+} from './createListStore'
 
 export function useListStore<T extends CreateListStoreReturn>(
-  injectionKey: Symbol | string = DefaultInjectionKey
+  injectionKey: Symbol | string = ListStoreInjectionKeyDefault
 ) {
   return inject<T>(injectionKey)
 }

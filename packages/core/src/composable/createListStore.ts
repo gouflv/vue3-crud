@@ -10,7 +10,7 @@ import {
 } from '../types'
 import { valueOf } from '../utils'
 
-export const DefaultInjectionKey = 'ListStoreInjection'
+export const ListStoreInjectionKeyDefault = 'ListStoreInjection'
 
 type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
@@ -55,6 +55,13 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
    * Transform `items` of PaginationResponse into `TItem`
    */
   transformItems?: (items: any[]) => TItem[]
+
+  /**
+   * Automatically fetch when `createListStore` is called
+   *
+   * Default: `true`
+   */
+  immediate?: boolean
 }
 
 export function createListStore<
@@ -66,7 +73,7 @@ export function createListStore<
 
   const initialParams = ref<TInitialParams>({} as TInitialParams)
 
-  const search = ref<TSearch>({} as TSearch)
+  const search = ref<Partial<TSearch>>({})
 
   const pagination = ref<PaginationQuery>({
     page: 0,
@@ -76,6 +83,8 @@ export function createListStore<
   const data = ref<PageData<TItem>>()
 
   const loading = ref(false)
+
+  const error = ref<Error>()
 
   const abortController = ref<AbortController>()
 
@@ -91,6 +100,9 @@ export function createListStore<
       abortController.value.abort()
     }
     abortController.value = new AbortController()
+
+    // Clear error
+    error.value = undefined
   }
 
   async function fetch() {
@@ -99,13 +111,13 @@ export function createListStore<
     try {
       loading.value = true
 
-      const res = await request.get(
+      const unwrappedResponse = await request.get(
         valueOf(options.url, { initialParams: initialParams.value }),
         getFetchQuery(),
         getFetchConfig()
       )
 
-      const paginationResponse = transformResponse(res)
+      const paginationResponse = transformResponse(unwrappedResponse)
 
       data.value = {
         items: transformItems(paginationResponse.items),
@@ -114,7 +126,7 @@ export function createListStore<
         total: paginationResponse.total
       }
     } catch (e: any) {
-      // TODO call `options.onError` if provided
+      error.value = e
     } finally {
       loading.value = false
     }
@@ -136,6 +148,7 @@ export function createListStore<
       })
     }
     return {
+      ...initialParams.value,
       ...search.value,
       ...pagination.value
     }
@@ -153,11 +166,10 @@ export function createListStore<
   }
 
   /**
-   * Call `options.transformResponse` to transform response data if provided
+   * Transform response data into `PaginationResponse`
    *
+   * Call `options.transformResponse` if provided.
    * Otherwise, return response data directly
-   *
-   * @param response Pure response json
    */
   function transformResponse(response: any): PaginationResponse<TItem> {
     if (options.transformResponse) {
@@ -217,8 +229,9 @@ export function createListStore<
   setup()
 
   function injection() {
+    // TODO disable default inject
     if (options.injectionKey === false) return
-    const key = options.injectionKey || DefaultInjectionKey
+    const key = options.injectionKey || ListStoreInjectionKeyDefault
     provide(key, store)
   }
   injection()
