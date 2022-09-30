@@ -16,7 +16,7 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
    * Provide `ListStore` to descendants components by `injection` key
    */
-  injectionKey?: false | string | Symbol
+  injectionKey?: true | string | Symbol
 
   /**
    * Initial params
@@ -80,7 +80,17 @@ export function createListStore<
     size: 20
   })
 
-  const data = ref<PageData<TItem>>()
+  /**
+   * Data of current page
+   *
+   * Note: Not use generic for `reactive`
+   */
+  const data = ref({
+    items: [],
+    page: 0,
+    size: 0,
+    total: 0
+  }) as Ref<PageData<TItem>>
 
   const loading = ref(false)
 
@@ -229,9 +239,11 @@ export function createListStore<
   setup()
 
   function injection() {
-    // TODO disable default inject
-    if (options.injectionKey === false) return
-    const key = options.injectionKey || ListStoreInjectionKeyDefault
+    if (!options.injectionKey) return
+    const key =
+      options.injectionKey === true
+        ? ListStoreInjectionKeyDefault
+        : options.injectionKey
     provide(key, store)
   }
   injection()
