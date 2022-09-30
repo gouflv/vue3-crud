@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
-import { provide, ref } from 'vue'
-import { RequestService } from '../services'
+import { provide, Ref, ref } from 'vue'
+import { ConfigProvider } from '../configuration/provider'
 import {
   PageData,
   PaginationQuery,
@@ -62,7 +62,7 @@ export function createListStore<
   TSearch extends PlainObject,
   TInitialParams extends PlainObject
 >(options: ListStoreOptions<TItem, TSearch, TInitialParams>) {
-  const request = new RequestService()
+  const { requestService: request } = ConfigProvider.config
 
   const initialParams = ref<TInitialParams>({} as TInitialParams)
 
