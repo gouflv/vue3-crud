@@ -1,8 +1,16 @@
 <template>
-  <div>Items: {{ data.value.items }}</div>
+  <div>Data: {{ data }}</div>
+  <div>
+    Items:
+    <ul>
+      <li v-for="(item, i) in data.items" :key="i">
+        {{ item.name }}
+      </li>
+    </ul>
+  </div>
   <div>Loading: {{ loading }}</div>
-  <div>Page: {{ pagination }}</div>
-  <div>Search: {{ search }}</div>
+  <div>Pagination: {{ pagination }}, index: {{ pagination.page }}</div>
+  <div>Search: {{ search }}, name: {{ search.name }}</div>
   <div>
     <button @click="pageNext">Page next</button>
     <button @click="onSearch">Search submit</button>
@@ -19,10 +27,10 @@ const { data, loading, pagination, search, actions } = createListStore({
   url: 'mock/users'
 })
 
-actions.fetch()
+// actions.fetch()
 
 function pageNext() {
-  actions.setPaginationQuery((val) => ({ page: val.page + 1 }))
+  actions.setPagination((val) => ({ page: val.page + 1 }))
 }
 
 function onSearch() {
