@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios'
-import { provide, reactive, ref } from 'vue'
+import { provide, Ref, ref } from 'vue'
 import { ConfigProvider } from '../configuration/provider'
 import {
   PageData,
@@ -21,7 +21,8 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
    * Initial params
    *
-   * TODO: support returns a promise
+   * TODO:
+   * - Support a reactive object
    */
   initialParams?: () => TInitialParams
 
@@ -38,8 +39,8 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
    * Return an object that will be used as `params` of `fetch` request
    */
   getFetchQuery?: (state: {
-    initialParams?: TInitialParams
-    search: TSearch
+    initialParams: TInitialParams
+    search?: TSearch
     pagination: PaginationQuery
   }) => PlainObject
 
@@ -73,26 +74,24 @@ export function createListStore<
 >(options: ListStoreOptions<TItem, TSearch, TInitialParams>) {
   const { requestService: request } = ConfigProvider.config
 
-  const initialParams = reactive({}) as TInitialParams
+  const initialParams = ref({}) as Ref<TInitialParams>
 
-  const search = reactive({}) as TSearch
+  const search = ref({}) as Ref<TSearch>
 
-  const pagination = reactive({
+  const pagination = ref({
     page: 0,
     size: 20
-  }) as PaginationQuery
+  }) as Ref<PaginationQuery>
 
   /**
    * Data of current page
-   *
-   * Not to use generic on `reactive` because it will cause type error
    */
-  const data = reactive({
+  const data = ref({
     items: [],
     page: 0,
     size: 0,
     total: 0
-  }) as PageData<TItem>
+  }) as Ref<PageData<TItem>>
 
   const loading = ref(false)
 
@@ -118,19 +117,21 @@ export function createListStore<
       loading.value = true
 
       const unwrappedResponse = await request.get(
-        valueOf(options.url, { initialParams }),
+        valueOf(options.url, { initialParams: initialParams.value }),
         getFetchQuery(),
         getFetchConfig()
       )
 
       const paginationResponse = transformResponse(unwrappedResponse)
 
-      Object.assign(data, <PageData<TItem>>{
+      console.debug('[createListStore] PaginationResponse', paginationResponse)
+
+      data.value = {
         items: transformItems(paginationResponse.items),
         page: paginationResponse.page,
         size: paginationResponse.size,
         total: paginationResponse.total
-      })
+      }
     } catch (e: any) {
       error.value = e
     } finally {
@@ -148,15 +149,15 @@ export function createListStore<
   function getFetchQuery() {
     if (options.getFetchQuery) {
       return options.getFetchQuery({
-        initialParams,
-        search,
-        pagination
+        initialParams: initialParams.value,
+        search: search.value,
+        pagination: pagination.value
       })
     }
     return {
-      ...initialParams,
-      ...search,
-      ...pagination
+      ...initialParams.value,
+      ...search.value,
+      ...pagination.value
     }
   }
 
@@ -200,40 +201,46 @@ export function createListStore<
    * Replace `search` with new value and refetch
    */
   function setSearch(value: TSearch) {
-    Object.assign(search, value)
-    pagination.page = 0
+    search.value = value
+    pagination.value = { ...pagination.value, page: 0 }
     fetch()
   }
 
-  function updateInitialParams(value: Partial<TInitialParams>) {
-    Object.assign(initialParams, value)
+  /**
+   * Replace `initialParams` with new value
+   */
+  function setInitialParams(value: TInitialParams) {
+    initialParams.value = value
   }
 
   /**
-   * Update `search` with new value and refetch
+   * Update `pagination` with new value and refetch
    *
    * value can be `PaginationQuery` or a function that returns `PaginationQuery`
    */
-  function updatePagination(
+  function setPagination(
     value:
       | Partial<PaginationQuery>
       | ReturnValueFn<Partial<PaginationQuery>, PaginationQuery>
   ) {
-    const newValue = valueOf(value, pagination)
-    Object.assign(pagination, newValue)
+    const newValue = valueOf(value, pagination.value)
+    pagination.value = { ...pagination.value, ...newValue }
     fetch()
   }
 
   const store = {
     data,
     loading,
-    pagination,
-    search,
+    state: {
+      initialParams,
+      pagination,
+      search
+    },
     actions: {
       fetch,
       setSearch,
-      updateInitialParams,
-      updatePagination
+      setInitialParams,
+      setPagination
     }
   }
 
@@ -246,13 +253,17 @@ export function createListStore<
       provide(key, store)
     }
 
-    const immediate = options.immediate ?? true
-    if (immediate) {
-      fetch()
+    if (options.initialParams) {
+      setInitialParams(options.initialParams())
     }
   }
 
   setup()
+
+  const immediate = options.immediate ?? true
+  if (immediate) {
+    fetch()
+  }
 
   return store
 }

@@ -1,5 +1,14 @@
 <template>
-  <div>Data: {{ data }}</div>
+  <h2>List</h2>
+  <div>Initial: {{ state.initialParams }}</div>
+  <div>Search: {{ state.search }}</div>
+  <div>
+    Pagination: {{ state.pagination }}, index:
+    {{ state.pagination.value?.page }}
+  </div>
+  <div>Loading: {{ loading }}</div>
+  <hr />
+  <div>PageData: {{ data }}</div>
   <div>
     Items:
     <ul>
@@ -8,14 +17,13 @@
       </li>
     </ul>
   </div>
-  <div>Loading: {{ loading }}</div>
-  <div>Pagination: {{ pagination }}, index: {{ pagination.page }}</div>
-  <div>Search: {{ search }}, name: {{ search.name }}</div>
-  <div>
+  <p>
+    <button @click="setInitial">Initial params</button>
+    <br />
     <button @click="pageNext">Page next</button>
+    <br />
     <button @click="onSearch">Search submit</button>
-  </div>
-
+  </p>
   <Edit />
 </template>
 
@@ -23,11 +31,15 @@
 import { createListStore } from '@vue3-crud/core'
 import Edit from './edit.vue'
 
-const { data, loading, pagination, search, actions } = createListStore({
+const { data, loading, state, actions } = createListStore({
   url: 'mock/users'
 })
 
 // actions.fetch()
+
+function setInitial() {
+  actions.setInitialParams({ initValue: 1 })
+}
 
 function pageNext() {
   actions.setPagination((val) => ({ page: val.page + 1 }))
