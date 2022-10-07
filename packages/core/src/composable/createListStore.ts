@@ -198,19 +198,19 @@ export function createListStore<
   }
 
   /**
+   * Replace `initialParams` with new value
+   */
+  function setInitialParams(value: TInitialParams) {
+    initialParams.value = value
+  }
+
+  /**
    * Replace `search` with new value and refetch
    */
   function setSearch(value: TSearch) {
     search.value = value
     pagination.value = { ...pagination.value, page: 0 }
     fetch()
-  }
-
-  /**
-   * Replace `initialParams` with new value
-   */
-  function setInitialParams(value: TInitialParams) {
-    initialParams.value = value
   }
 
   /**
@@ -238,8 +238,8 @@ export function createListStore<
     },
     actions: {
       fetch,
-      setSearch,
       setInitialParams,
+      setSearch,
       setPagination
     }
   }
