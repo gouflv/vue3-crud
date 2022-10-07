@@ -1,35 +1,35 @@
 <template>
-  <h2>List</h2>
-  <div>Initial: {{ state.initialParams }}</div>
-  <div>Search: {{ state.search }}</div>
-  <div>
+  <h1>createListStore</h1>
+  <p>Initial: {{ state.initialParams }}</p>
+  <p>Search: {{ state.search }}</p>
+  <p>
     Pagination: {{ state.pagination }}, index:
     {{ state.pagination.value?.page }}
-  </div>
-  <div>Loading: {{ loading }}</div>
-  <hr />
-  <div>PageData: {{ data }}</div>
-  <div>
+  </p>
+  <p>Loading: {{ loading }}</p>
+  <p>PageData: {{ data }}</p>
+  <p>
     Items:
     <ul>
       <li v-for="(item, i) in data.items" :key="i">
         {{ item.name }}
       </li>
     </ul>
-  </div>
+  </p>
   <p>
     <button @click="setInitial">Initial params</button>
-    <br />
-    <button @click="pageNext">Page next</button>
-    <br />
+  </p>
+  <p>
     <button @click="onSearch">Search submit</button>
+  </p>
+  <p>
+    <button @click="pageNext">Page next</button>
   </p>
   <Edit />
 </template>
 
 <script setup lang="ts">
 import { createListStore } from '@vue3-crud/core'
-import Edit from './edit.vue'
 
 const { data, loading, state, actions } = createListStore({
   url: 'mock/users'

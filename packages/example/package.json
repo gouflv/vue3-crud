@@ -9,12 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vue3-crud/core": "workspace:*",
+    "ant-design-vue": "^3.2.12",
     "vue": "^3.2.37",
-    "@vue3-crud/core": "workspace:*"
+    "vue-router": "4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.1.0",
     "typescript": "^4.6.4",
+    "unplugin-vue-components": "^0.22.8",
     "vite": "^3.1.0",
     "vue-tsc": "^0.40.4"
   }
