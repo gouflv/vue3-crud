@@ -1,5 +1,5 @@
 <template>
-  <h1>createListStore</h1>
+  <h1>useListStore</h1>
   <p>Initial: {{ state.initialParams }}</p>
   <p>Search: {{ state.search }}</p>
   <p>
@@ -29,9 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { createListStore } from '@vue3-crud/core'
+import { useListStore } from '@vue3-crud/core'
 
-const { data, loading, state, actions } = createListStore({
+const { data, loading, state, actions } = useListStore({
   url: 'mock/users'
 })
 

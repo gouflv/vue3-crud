@@ -2,7 +2,7 @@
   <div style="display: flex; min-height: 100vh">
     <nav style="padding: 32px 16px; width: 10rem; background: #eee">
       <div>
-        <router-link to="/createListStore">createListStore</router-link>
+        <router-link to="/useListStore">useListStore</router-link>
       </div>
       <div><router-link to="/antd-simple">AntVue</router-link></div>
     </nav>

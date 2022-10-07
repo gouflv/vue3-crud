@@ -4,8 +4,8 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     {
-      path: '/createListStore',
-      component: () => import('./views/createListStore/index.vue')
+      path: '/useListStore',
+      component: () => import('./views/useListStore/index.vue')
     },
     {
       path: '/antd-simple',
