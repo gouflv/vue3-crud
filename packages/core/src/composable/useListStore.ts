@@ -236,11 +236,9 @@ export function useListStore<
   const store = {
     data,
     loading,
-    state: {
-      initialParams,
-      pagination,
-      search
-    },
+    initialParams,
+    pagination,
+    search,
     actions: {
       fetch,
       setInitialParams,

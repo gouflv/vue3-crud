@@ -1,10 +1,10 @@
 <template>
   <h1>useListStore</h1>
-  <p>Initial: {{ state.initialParams }}</p>
-  <p>Search: {{ state.search }}</p>
+  <p>Initial: {{ initialParams }}</p>
+  <p>Search: {{ search }}</p>
   <p>
-    Pagination: {{ state.pagination }}, index:
-    {{ state.pagination.value?.page }}
+    Pagination: {{ pagination }}, index:
+    {{ pagination.page }}
   </p>
   <p>Loading: {{ loading }}</p>
   <p>PageData: {{ data }}</p>
@@ -17,22 +17,22 @@
     </ul>
   </p>
   <p>
-    <button @click="setInitial">Initial params</button>
+    <button @click="setInitial">Update initial params</button>
   </p>
   <p>
     <button @click="onSearch">Search submit</button>
   </p>
   <p>
-    <button @click="pageNext">Page next</button>
+    <button @click="pageNext">Next Page</button>
   </p>
-  <Edit />
 </template>
 
 <script setup lang="ts">
 import { useListStore } from '@vue3-crud/core'
 
-const { data, loading, state, actions } = useListStore({
-  url: 'mock/users'
+const { data, loading, initialParams, search, pagination, actions } = useListStore({
+  url: 'mock/users',
+  initialParams: { initValue: 0 }
 })
 
 // actions.fetch()
@@ -41,11 +41,11 @@ function setInitial() {
   actions.setInitialParams({ initValue: 1 })
 }
 
-function pageNext() {
-  actions.setPagination((val) => ({ page: val.page + 1 }))
-}
-
 function onSearch() {
   actions.setSearch({ name: 'test' })
+}
+
+function pageNext() {
+  actions.setPagination((val) => ({ page: val.page + 1 }))
 }
 </script>
