@@ -1,7 +1,8 @@
 import axiosInstance, {
   AxiosError,
   AxiosInstance,
-  AxiosRequestConfig
+  AxiosRequestConfig,
+  AxiosResponse
 } from 'axios'
 import { ConfigProvider } from '../configuration/provider'
 import { ResponseWrapper, UnwrappedResponse } from '../types'
@@ -73,6 +74,13 @@ export class RequestService {
    * Normalize response to standard format - `ResponseWrapper`
    *
    * May be override in subclass
+   *
+   * @example ```ts
+   *   // Wrap pure response to `ResponseWrapper`
+   *   normalizeResponse(response) {
+   *     return { data: response }
+   *   }
+   * ```
    */
   normalizeResponse<T>(response: any): ResponseWrapper<T> {
     return response
@@ -96,12 +104,12 @@ export class RequestService {
       if (response) {
         // The request was made and the server responded with a status code
 
-        if (response.status === 401) {
+        if (this.isAuthFailed(response)) {
           this.onAuthFailed(error)
           return
         }
 
-        // TODO show error message in response.data
+        // TODO show error message in `response.data`
         messageService.open({ type: 'error', content: '服务繁忙' })
       } else if (request) {
         // The request was made but no response was received
@@ -118,8 +126,15 @@ export class RequestService {
     messageService.open({ type: 'error', content: error.message })
   }
 
+  isAuthFailed(response: AxiosResponse) {
+    return response.status === 401
+  }
+
   /**
+   * Auth failed handler
    * Implement in subclass
    */
-  onAuthFailed(error: AxiosError) {}
+  onAuthFailed(error: AxiosError) {
+    console.error('[RequestService] Should implement `onAuthFailed`', error)
+  }
 }

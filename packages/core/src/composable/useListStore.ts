@@ -32,6 +32,11 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
    * Pass value or function that returns value
    *
    * If function is passed, it will be called with `initialParams`
+   *
+   * @example ```ts
+   *   url: '/api/users'
+   *   url: (initialParams) => '/api/users'
+   * ```
    */
   url: string | ReturnValueFn<string, { initialParams?: TInitialParams }>
 
