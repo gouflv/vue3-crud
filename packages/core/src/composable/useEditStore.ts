@@ -107,12 +107,12 @@ export function useEditStore<
    *
    * @param options.actionParams
    */
-  async function onAdd(action?: { actionParams?: PlainObject }) {
+  async function onAdd(params?: PlainObject) {
     options.preAction?.()
     try {
       isEdit.value = false
       loading.value = true
-      if (action?.actionParams) actionParams.value = action.actionParams
+      if (params) actionParams.value = params
       data.value = await getDefaultFormData()
     } catch (error) {
       // TODO: handle error
@@ -127,12 +127,12 @@ export function useEditStore<
    *
    * @param options.actionParams
    */
-  async function onEdit(action: { actionParams?: PlainObject }) {
+  async function onEdit(params: PlainObject) {
     options.preAction?.()
     try {
       isEdit.value = true
       loading.value = true
-      if (action?.actionParams) actionParams.value = action.actionParams
+      actionParams.value = params
       data.value = await fetchFormData()
     } catch (error) {
       // TODO: handle error
@@ -143,27 +143,36 @@ export function useEditStore<
   }
 
   async function onSubmit() {
-    saving.value = true
-    const url = resolveValue(options.submitUrl, {
-      actionParams: actionParams.value,
-      data: data.value
-    })
-    submitResponse.value = await request.post(
-      url,
-      options.transformFormDataToRequestData
-        ? options.transformFormDataToRequestData(
-            data.value,
-            initialParams.value
-          )
-        : data.value,
-      options.submitConfig?.()
-    )
-    saving.value = false
-    options.postAction?.(submitResponse.value)
+    try {
+      saving.value = true
+      const url = resolveValue(options.submitUrl, {
+        actionParams: actionParams.value,
+        data: data.value
+      })
+      submitResponse.value = await request.request({
+        url,
+        method: isEdit.value ? 'PUT' : 'POST',
+        data: options.transformFormDataToRequestData
+          ? options.transformFormDataToRequestData(
+              data.value,
+              initialParams.value
+            )
+          : data.value,
+        ...options.submitConfig?.()
+      })
+    } catch (error) {
+      // TODO handle error
+      console.error(error)
+    } finally {
+      saving.value = false
+      options.postAction?.(submitResponse.value)
+    }
   }
 
   async function onReset() {
+    loading.value = true
     data.value = await (isEdit.value ? fetchFormData() : getDefaultFormData())
+    loading.value = false
   }
 
   async function getDefaultFormData(): Promise<TFromData> {
