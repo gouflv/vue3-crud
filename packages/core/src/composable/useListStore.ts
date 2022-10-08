@@ -8,7 +8,7 @@ import {
   PlainObject,
   ReturnValueFn
 } from '../types'
-import { valueOf } from '../utils'
+import { resolveValue } from '../utils'
 
 export const ListStoreInjectionKeyDefault = 'ListStoreInjection'
 
@@ -24,7 +24,7 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
    * TODO:
    * - Support a reactive object
    */
-  initialParams?: () => TInitialParams
+  initialParams?: TInitialParams | (() => TInitialParams)
 
   /**
    * `url` used to fetch list
@@ -122,7 +122,7 @@ export function useListStore<
       loading.value = true
 
       const unwrappedResponse = await request.get(
-        valueOf(options.url, { initialParams: initialParams.value }),
+        resolveValue(options.url, { initialParams: initialParams.value }),
         getFetchQuery(),
         getFetchConfig()
       )
@@ -228,7 +228,7 @@ export function useListStore<
       | Partial<PaginationQuery>
       | ReturnValueFn<Partial<PaginationQuery>, PaginationQuery>
   ) {
-    const newValue = valueOf(value, pagination.value)
+    const newValue = resolveValue(value, pagination.value)
     pagination.value = { ...pagination.value, ...newValue }
     fetch()
   }
@@ -259,7 +259,7 @@ export function useListStore<
     }
 
     if (options.initialParams) {
-      setInitialParams(options.initialParams())
+      setInitialParams(resolveValue(options.initialParams, null))
     }
   }
 
