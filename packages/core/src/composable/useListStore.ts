@@ -2,6 +2,7 @@ import { AxiosRequestConfig } from 'axios'
 import { provide, Ref, ref } from 'vue'
 import { ConfigProvider } from '../configuration/provider'
 import {
+  MaybePromiseFnWithParams,
   MaybeValueFn,
   MaybeValueFnWithParams,
   PageData,
@@ -9,7 +10,7 @@ import {
   PaginationResponse,
   PlainObject
 } from '../types'
-import { resolveValue } from '../utils'
+import { resolveAsyncValue, resolveValue } from '../utils'
 
 export const ListStoreInjectionKeyDefault = 'ListStoreInjection'
 
@@ -44,16 +45,24 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
    * Return an object that will be used as `params` of `fetch` request
    */
-  getFetchQuery?: (state: {
+  createFetchQuery?: (state: {
     initialParams: TInitialParams
     search?: TSearch
     pagination: PaginationQuery
   }) => PlainObject
 
   /**
-   * Return axios config
+   * Return additional axios config
    */
   getFetchConfig?: () => AxiosRequestConfig
+
+  /**
+   * Default search
+   */
+  defaultSearch?: MaybePromiseFnWithParams<
+    TSearch,
+    { initialParams: TInitialParams }
+  >
 
   /**
    * Transform response data into `PaginationResponse`
@@ -153,8 +162,8 @@ export function useListStore<
    * Otherwise, return default fetch query that combine `search` and `pagination`
    */
   function getFetchQuery() {
-    if (options.getFetchQuery) {
-      return options.getFetchQuery({
+    if (options.createFetchQuery) {
+      return options.createFetchQuery({
         initialParams: initialParams.value,
         search: search.value,
         pagination: pagination.value
@@ -246,7 +255,7 @@ export function useListStore<
     }
   }
 
-  function setup() {
+  async function setup() {
     if (options.injectionKey) {
       const key =
         options.injectionKey === true
@@ -256,16 +265,24 @@ export function useListStore<
     }
 
     if (options.initialParams) {
-      setInitialParams(resolveValue(options.initialParams))
+      initialParams.value = resolveValue(options.initialParams)
+    }
+
+    if (options.defaultSearch) {
+      search.value = await resolveAsyncValue(options.defaultSearch, {
+        initialParams: initialParams.value
+      })
+    }
+
+    // TODO restore user pagination
+
+    const immediate = options.immediate ?? true
+    if (immediate) {
+      fetch()
     }
   }
 
   setup()
-
-  const immediate = options.immediate ?? true
-  if (immediate) {
-    fetch()
-  }
 
   return store
 }
