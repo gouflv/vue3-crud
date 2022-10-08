@@ -2,11 +2,12 @@ import { AxiosRequestConfig } from 'axios'
 import { provide, Ref, ref } from 'vue'
 import { ConfigProvider } from '../configuration/provider'
 import {
+  MaybeValueFn,
+  MaybeValueFnWithParams,
   PageData,
   PaginationQuery,
   PaginationResponse,
-  PlainObject,
-  ReturnValueFn
+  PlainObject
 } from '../types'
 import { resolveValue } from '../utils'
 
@@ -24,7 +25,7 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
    * TODO:
    * - Support a reactive object
    */
-  initialParams?: TInitialParams | (() => TInitialParams)
+  initialParams?: MaybeValueFn<TInitialParams>
 
   /**
    * `url` used to fetch list
@@ -38,7 +39,7 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
    *   url: (initialParams) => '/api/users'
    * ```
    */
-  url: string | ReturnValueFn<string, { initialParams?: TInitialParams }>
+  url: MaybeValueFnWithParams<string, { initialParams?: TInitialParams }>
 
   /**
    * Return an object that will be used as `params` of `fetch` request
@@ -224,9 +225,7 @@ export function useListStore<
    * value can be `PaginationQuery` or a function that returns `PaginationQuery`
    */
   function setPagination(
-    value:
-      | Partial<PaginationQuery>
-      | ReturnValueFn<Partial<PaginationQuery>, PaginationQuery>
+    value: MaybeValueFnWithParams<Partial<PaginationQuery>, PaginationQuery>
   ) {
     const newValue = resolveValue(value, pagination.value)
     pagination.value = { ...pagination.value, ...newValue }
@@ -257,7 +256,7 @@ export function useListStore<
     }
 
     if (options.initialParams) {
-      setInitialParams(resolveValue(options.initialParams, null))
+      setInitialParams(resolveValue(options.initialParams))
     }
   }
 

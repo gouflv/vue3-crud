@@ -1,4 +1,4 @@
-import { isFunction, ReturnValueFn } from '../types'
+import { isFunction, MaybeValueFn, MaybeValueFnWithParams } from '../types'
 
 /**
  * Return the value of `valuable`
@@ -8,10 +8,15 @@ import { isFunction, ReturnValueFn } from '../types'
  * Otherwise, it will be returned directly
  */
 export function resolveValue<R, P>(
-  valuable: R | ReturnValueFn<R, P>,
-  params: P
+  valuable: R | MaybeValueFn<R> | MaybeValueFnWithParams<R, P>,
+  params?: P
 ): R {
-  return isFunction(valuable) ? valuable(params) : valuable
+  if (isFunction(valuable)) {
+    return params
+      ? (valuable as MaybeValueFnWithParams<R, P>)(params)
+      : (valuable as MaybeValueFn<R>)()
+  }
+  return valuable
 }
 
 /**
@@ -26,7 +31,7 @@ export function resolveValue<R, P>(
  * Otherwise, it will be returned directly
  */
 export async function resolveAsyncValue<R, P>(
-  valuable: R | ReturnValueFn<R, P>,
+  valuable: R | MaybeValueFnWithParams<R, P>,
   params: P
 ): Promise<R> {
   if (isFunction(valuable)) {
