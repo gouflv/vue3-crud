@@ -1,12 +1,15 @@
 <template>
-  <div style="display: flex; min-height: 100vh">
-    <nav style="padding: 32px 16px; width: 10rem; background: #eee">
+  <div style="">
+    <nav style="padding: 32px; background: #eee">
       <div>
         <router-link to="/useListStore">useListStore</router-link>
       </div>
+      <div>
+        <router-link to="/useEditStore">useEditStore</router-link>
+      </div>
       <div><router-link to="/antd-simple">AntVue</router-link></div>
     </nav>
-    <div style="flex: 1; padding: 32px">
+    <div style="padding: 32px">
       <router-view />
     </div>
   </div>

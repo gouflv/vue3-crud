@@ -8,6 +8,10 @@ const router = createRouter({
       component: () => import('./views/useListStore/index.vue')
     },
     {
+      path: '/useEditStore',
+      component: () => import('./views/useEditStore/index.vue')
+    },
+    {
       path: '/antd-simple',
       component: () => import('./views/antd-simple/index.vue')
     }
