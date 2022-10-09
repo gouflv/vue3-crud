@@ -1,14 +1,21 @@
 <template>
-  <div>FormData: {{ data }}</div>
+  <p>FormData: {{ data }}</p>
+  <p>Visible: {{ visible }}</p>
 
-  <form @submit.prevent="actions.onSubmit">
+  <form v-if="visible" @submit.prevent="actions.onSubmit">
     <input type="text" v-model="data.name" />
     <button>Submit</button>
   </form>
 </template>
 
 <script setup lang="ts">
-import { injectEditStore } from '@vue3-crud/core'
+import {
+  EditModalStoreInjectionKey,
+  UseEditModalStoreReturn,
+  useInjection
+} from '@vue3-crud/core'
 
-const { data, actions } = injectEditStore()
+const { visible, data, actions } = useInjection<UseEditModalStoreReturn>(
+  EditModalStoreInjectionKey
+)
 </script>

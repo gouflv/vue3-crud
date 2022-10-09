@@ -1,4 +1,5 @@
 <template>
+  <h1>Combine List and Edit</h1>
   <div>
     List:
     <ul>
@@ -13,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { useEditStore, useListStore } from '@vue3-crud/core'
+import { useEditModalStore, useListStore } from '@vue3-crud/core'
 import { reactive } from 'vue'
 import Edit from './edit.vue'
 
@@ -23,7 +24,7 @@ const list = reactive(
   })
 )
 
-const { actions: edit } = useEditStore({
+const { actions: edit } = useEditModalStore({
   submitUrl: ({ data, isEdit }) =>
     isEdit ? `/mock/users/${data.id}` : '/mock/users',
   postSubmit: () => list.actions.fetch()

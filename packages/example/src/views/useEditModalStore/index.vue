@@ -1,5 +1,5 @@
 <template>
-  <h1>useEditStore</h1>
+  <h1>useEditModalStore</h1>
   <p>Initial: {{ initialParams }}</p>
   <p>Action Params: {{ actionParams }}</p>
   <p>Loading: {{ loading }}</p>
