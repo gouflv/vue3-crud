@@ -33,13 +33,13 @@ type EditStoreOptions<TFromData, TInitialParams> = {
    */
   defaultFormData?: MaybePromiseFnWithParams<
     TFromData,
-    { initialParams?: TInitialParams; actionParams?: any }
+    { initialParams: TInitialParams; actionParams: any }
   >
 
   /**
    * `url` used to fetch form data
    */
-  fetchUrl?: MaybeValueFnWithParams<string, { actionParams?: PlainObject }>
+  fetchUrl?: MaybeValueFnWithParams<string, { actionParams: PlainObject }>
 
   /**
    * Return additional axios config
@@ -56,7 +56,7 @@ type EditStoreOptions<TFromData, TInitialParams> = {
    */
   submitUrl: MaybeValueFnWithParams<
     string,
-    { actionParams?: PlainObject; data: TFromData }
+    { actionParams: PlainObject; data: TFromData; isEdit: boolean }
   >
 
   /**
@@ -102,17 +102,25 @@ export function useEditStore<
 
   const submitResponse = ref<any>()
 
+  const abortControllerForSubmit = ref<AbortController>()
+
+  function preAction() {
+    saving.value = false
+    data.value = {} as TFromData
+    options.preAction?.()
+  }
+
   /**
    * Initialize add form
    *
    * @param options.actionParams
    */
   async function onAdd(params?: PlainObject) {
-    options.preAction?.()
+    preAction()
     try {
       isEdit.value = false
       loading.value = true
-      if (params) actionParams.value = params
+      actionParams.value = params ?? {}
       data.value = await getDefaultFormData()
     } catch (error) {
       // TODO: handle error
@@ -128,11 +136,11 @@ export function useEditStore<
    * @param options.actionParams
    */
   async function onEdit(params: PlainObject) {
-    options.preAction?.()
+    preAction()
     try {
       isEdit.value = true
       loading.value = true
-      actionParams.value = params
+      actionParams.value = params ?? {}
       data.value = await fetchFormData()
     } catch (error) {
       // TODO: handle error
@@ -142,22 +150,42 @@ export function useEditStore<
     }
   }
 
+  function preSubmit() {
+    // Abort previous submit
+    if (abortControllerForSubmit.value) {
+      abortControllerForSubmit.value.abort()
+    }
+    abortControllerForSubmit.value = new AbortController()
+
+    submitResponse.value = undefined
+  }
+
   async function onSubmit() {
+    preSubmit()
     try {
       saving.value = true
       const url = resolveValue(options.submitUrl, {
         actionParams: actionParams.value,
-        data: data.value
+        data: data.value,
+        isEdit: isEdit.value
       })
-      submitResponse.value = await request.request({
+
+      const _data = options.transformFormDataToRequestData
+        ? options.transformFormDataToRequestData(
+            data.value,
+            initialParams.value
+          )
+        : data.value
+
+      const defaultConfig: AxiosRequestConfig = {
         url,
         method: isEdit.value ? 'PUT' : 'POST',
-        data: options.transformFormDataToRequestData
-          ? options.transformFormDataToRequestData(
-              data.value,
-              initialParams.value
-            )
-          : data.value,
+        data: _data,
+        signal: abortControllerForSubmit.value?.signal
+      }
+
+      submitResponse.value = await request.request({
+        ...defaultConfig,
         ...options.submitConfig?.()
       })
     } catch (error) {
