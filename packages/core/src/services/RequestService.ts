@@ -31,8 +31,9 @@ export class RequestService {
 
       return result
     } catch (e) {
-      const ex = e as AxiosError
-      this.requestErrorHandler(ex)
+      console.error('[RequestService] Request error', e)
+
+      this.requestErrorHandler(e as AxiosError)
 
       throw e
     }
@@ -91,13 +92,12 @@ export class RequestService {
   }
 
   requestErrorHandler(error: AxiosError) {
+    const { messageService } = ConfigProvider.config
+
+    // Ignore error if request is canceled
     if (error.name === 'CanceledError') {
       return
     }
-
-    const { messageService } = ConfigProvider.config
-
-    console.error(error)
 
     if (error.isAxiosError) {
       const { response, request } = error
