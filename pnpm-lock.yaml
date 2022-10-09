@@ -5,9 +5,11 @@ importers:
   .:
     specifiers:
       '@rollup/plugin-typescript': ^8.5.0
+      '@types/lodash-es': ^4.17.6
       '@vueuse/core': ^9.3.0
       axios: ^0.27.2
       axios-mock-adapter: ^1.21.2
+      lodash-es: ^4.17.21
       prettier: ^2.7.1
       rollup: ^2.79.1
       tslib: ^2.4.0
@@ -16,9 +18,11 @@ importers:
     dependencies:
       '@vueuse/core': 9.3.0_vue@3.2.39
       axios: 0.27.2
+      lodash-es: 4.17.21
       vue: 3.2.39
     devDependencies:
       '@rollup/plugin-typescript': 8.5.0_jm3lfwhp2n3nxb4wwf6zz565he
+      '@types/lodash-es': 4.17.6
       axios-mock-adapter: 1.21.2_axios@0.27.2
       prettier: 2.7.1
       rollup: 2.79.1
@@ -198,6 +202,16 @@ packages:
 
   /@types/estree/0.0.39:
     resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
+    dev: true
+
+  /@types/lodash-es/4.17.6:
+    resolution: {integrity: sha512-R+zTeVUKDdfoRxpAryaQNRKk3105Rrgx2CFRClIgRGaqDTdjsm8h6IYA8ir584W3ePzkZfst5xIgDwYrlh9HLg==}
+    dependencies:
+      '@types/lodash': 4.14.186
+    dev: true
+
+  /@types/lodash/4.14.186:
+    resolution: {integrity: sha512-eHcVlLXP0c2FlMPm56ITode2AgLMSa6aJ05JTTbYbI+7EMkCEE5qk2E41d5g2lCVTqRe0GnnRFurmlCsDODrPw==}
     dev: true
 
   /@types/web-bluetooth/0.0.15:

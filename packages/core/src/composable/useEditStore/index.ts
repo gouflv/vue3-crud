@@ -1,15 +1,23 @@
 import { AxiosRequestConfig } from 'axios'
-import { Ref, ref } from 'vue'
-import { ConfigProvider } from '../configuration/provider'
+import { provide, Ref, ref } from 'vue'
+import { ConfigProvider } from '../../configuration/provider'
 import {
   MaybePromiseFnWithParams,
   MaybeValueFn,
   MaybeValueFnWithParams,
   PlainObject
-} from '../types'
-import { resolveAsyncValue, resolveValue } from '../utils'
+} from '../../types'
+import { resolveAsyncValue, resolveValue } from '../../utils'
+import { cloneDeep } from 'lodash-es'
+
+export const EditStoreInjectionKeyDefault = 'EditStoreInjection'
 
 type EditStoreOptions<TFromData, TInitialParams> = {
+  /**
+   * Provide `EditStore` to descendants components by `injection` key
+   */
+  injectionKey?: false | string | Symbol
+
   /**
    * Initial params
    *
@@ -228,7 +236,7 @@ export function useEditStore<
         ? options.transformFetchResponse(response)
         : (response as TFromData)
     }
-    return actionParams.value as TFromData
+    return cloneDeep(actionParams.value) as TFromData
   }
 
   function setInitialParams(params: TInitialParams) {
@@ -251,6 +259,17 @@ export function useEditStore<
   }
 
   function setup() {
+    if (
+      typeof options.injectionKey === 'string' ||
+      typeof options.injectionKey === 'symbol'
+    ) {
+      // Use injectionKey form options
+      provide(options.injectionKey, store)
+    } else if (options.injectionKey !== false) {
+      // Use default injectionKey
+      provide(EditStoreInjectionKeyDefault, store)
+    }
+
     if (options.initialParams) {
       initialParams.value = resolveValue(options.initialParams, null)
     }
