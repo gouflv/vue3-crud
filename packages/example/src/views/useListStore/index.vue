@@ -8,14 +8,14 @@
   </p>
   <p>Loading: {{ loading }}</p>
   <p>PageData: {{ data }}</p>
-  <p>
+  <div>
     Items:
     <ul>
       <li v-for="(item, i) in data.items" :key="i">
         {{ item.name }}
       </li>
     </ul>
-  </p>
+  </div>
   <p>
     <button @click="setInitial">Update initial params</button>
   </p>
@@ -30,10 +30,11 @@
 <script setup lang="ts">
 import { useListStore } from '@vue3-crud/core'
 
-const { data, loading, initialParams, search, pagination, actions } = useListStore({
-  url: 'mock/users',
-  initialParams: { initValue: 0 }
-})
+const { data, loading, initialParams, search, pagination, actions } =
+  useListStore({
+    url: 'mock/users',
+    initialParams: { initValue: 0 }
+  })
 
 // actions.fetch()
 
