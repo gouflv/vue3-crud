@@ -9,7 +9,7 @@
     <button @click="actions.onAdd({ name: 'foo' })">Add</button>
   </p>
   <p>
-    <button @click="actions.onEdit({ name: 'zoo' })">Edit</button>
+    <button @click="actions.onEdit({ id: 1, name: 'zoo' })">Edit</button>
   </p>
   <form @submit.prevent="actions.onSubmit">
     <input type="text" v-model="data.name" />
@@ -23,6 +23,8 @@ import { useEditStore } from '@vue3-crud/core'
 const { data, loading, saving, initialParams, actionParams, actions } =
   useEditStore({
     defaultFormData: ({ actionParams }) => actionParams,
-    submitUrl: '/api/users'
+    fetchUrl: ({ actionParams }) => `mock/users/${actionParams.id}`,
+    submitUrl: ({ data, isEdit }) =>
+      isEdit ? `/mock/users/${data.id}` : '/mock/users'
   })
 </script>

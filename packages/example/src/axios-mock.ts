@@ -9,24 +9,56 @@ export const mockAxios = (axios: AxiosInstance) => {
     onNoMatch: 'passthrough'
   })
 
-  axiosMock.onGet('/api/mock/users').reply(200, {
-    code: 0,
-    data: {
-      items: [
-        {
-          id: 1,
-          name: 'John Brown',
-          age: 32
-        },
-        {
-          id: 2,
-          name: 'Jim Green',
-          age: 42
-        }
-      ],
-      page: 0,
-      size: 20,
-      total: 21
+  let id = 1
+  axiosMock.onGet('/api/mock/users').reply(() => [
+    200,
+    {
+      code: 0,
+      data: {
+        items: [
+          {
+            id: id++,
+            name: 'John Brown',
+            age: 32
+          },
+          {
+            id: id++,
+            name: 'Jim Green',
+            age: 42
+          }
+        ],
+        page: 0,
+        size: 20,
+        total: 21
+      }
     }
-  })
+  ])
+
+  axiosMock.onGet(/\/api\/mock\/users\/\d+/).reply(() => [
+    200,
+    {
+      code: 0,
+      data: {
+        id: 1,
+        name: 'John Brown',
+        age: 2
+      }
+    }
+  ])
+
+  axiosMock.onPost('/api/mock/users').reply(() => [
+    200,
+    {
+      code: 0,
+      data: {}
+    }
+  ])
+
+  axiosMock.onPut(/\/api\/mock\/users\/\d+/).reply(() => [
+    200,
+    {
+      code: 0,
+      data: {}
+    }
+  ])
 }
