@@ -1,3 +1,4 @@
+import nodeResolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 
 export default {
@@ -14,5 +15,10 @@ export default {
       sourcemap: true
     }
   ],
-  plugins: [typescript({ sourceMap: false })]
+  plugins: [
+    typescript({ sourceMap: false }),
+    nodeResolve({
+      resolveOnly: [/^lodash/]
+    })
+  ]
 }

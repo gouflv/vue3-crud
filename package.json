@@ -4,9 +4,10 @@
   "scripts": {
     "format": "prettier --write --cache ."
   },
-  "author": "lv.gouf@gmail.com",
+  "author": "gouflv <lv.gouf@gmail.com>",
   "private": true,
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^14.1.0",
     "@rollup/plugin-typescript": "^8.5.0",
     "@types/lodash-es": "^4.17.6",
     "axios-mock-adapter": "^1.21.2",

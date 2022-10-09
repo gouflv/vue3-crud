@@ -1,23 +1,32 @@
 {
   "name": "@vue3-crud/core",
   "version": "0.1.0",
-  "author": "lv.gouf@gmail.com",
+  "author": "gouflv <lv.gouf@gmail.com>",
+  "license": "ISC",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
   "scripts": {
     "dev": "npm run clean && rollup -c -w",
     "build": "npm run clean && rollup -c",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist",
+    "prepack": "npm run build"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gouflv/vue3-crud.git"
   },
   "keywords": [
     "vue",
+    "vue3",
     "crud"
   ],
   "peerDependencies": {
     "axios": "^0.27.0",
     "vue": "^3.2.0"
-  },
-  "license": "MIT"
+  }
 }
