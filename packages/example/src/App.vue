@@ -7,6 +7,9 @@
       <div>
         <router-link to="/useEditStore">useEditStore</router-link>
       </div>
+      <div>
+        <router-link to="/list-and-edit">Combine List And Edit</router-link>
+      </div>
       <div><router-link to="/antd-simple">AntVue</router-link></div>
     </nav>
     <div style="padding: 32px">
