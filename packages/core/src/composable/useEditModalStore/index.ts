@@ -1,6 +1,8 @@
-import { ref } from 'vue'
+import { provide, ref } from 'vue'
 import { PlainObject } from '../../types'
 import { EditStoreOptions, useEditStore } from '../useEditStore'
+
+export const EditModalStoreInjectionKey = Symbol('EditModalStoreInjection')
 
 export function useEditModalStore<
   TForm extends PlainObject,
@@ -8,6 +10,10 @@ export function useEditModalStore<
 >(options: EditStoreOptions<TForm, TInitialParams>) {
   const edit = useEditStore({
     ...options,
+
+    // Abort `useEditStore`'s injection
+    injectionKey: false,
+
     preAction: () => {
       visible.value = true
       options.preAction?.()
@@ -20,8 +26,14 @@ export function useEditModalStore<
 
   const visible = ref(false)
 
-  return {
+  const store = {
     visible,
     ...edit
   }
+
+  provide(options.injectionKey || EditModalStoreInjectionKey, store)
+
+  return store
 }
+
+export type UseEditModalStoreReturn = ReturnType<typeof useEditModalStore>
