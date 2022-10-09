@@ -12,6 +12,10 @@ const router = createRouter({
       component: () => import('./views/useEditStore/index.vue')
     },
     {
+      path: '/useEditModalStore',
+      component: () => import('./views/useEditModalStore/index.vue')
+    },
+    {
       path: '/list-and-edit',
       component: () => import('./views/list-and-edit/index.vue')
     },

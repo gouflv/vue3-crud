@@ -12,7 +12,7 @@ import { cloneDeep } from 'lodash-es'
 
 export const EditStoreInjectionKeyDefault = 'EditStoreInjection'
 
-type EditStoreOptions<TFromData, TInitialParams> = {
+export type EditStoreOptions<TFromData, TInitialParams> = {
   /**
    * Provide `EditStore` to descendants components by `injection` key
    */
@@ -87,7 +87,9 @@ type EditStoreOptions<TFromData, TInitialParams> = {
 
   preAction?: () => void
 
-  postAction?: (response: any) => void
+  // postAction?: () => void
+
+  postSubmit?: (response: any) => void
 }
 
 export function useEditStore<
@@ -201,7 +203,7 @@ export function useEditStore<
       console.error(error)
     } finally {
       saving.value = false
-      options.postAction?.(submitResponse.value)
+      options.postSubmit?.(submitResponse.value)
     }
   }
 
