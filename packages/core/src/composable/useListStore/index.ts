@@ -12,7 +12,7 @@ import {
 } from '../../types'
 import { resolveAsyncValue, resolveValue } from '../../utils'
 
-export const ListStoreInjectionKeyDefault = 'ListStoreInjection'
+export const ListStoreInjectionKey = Symbol('ListStoreInjection')
 
 type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
@@ -264,7 +264,7 @@ export function useListStore<
       provide(options.injectionKey, store)
     } else if (options.injectionKey !== false) {
       // Use default injectionKey
-      provide(ListStoreInjectionKeyDefault, store)
+      provide(ListStoreInjectionKey, store)
     }
 
     if (options.initialParams) {

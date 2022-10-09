@@ -10,7 +10,7 @@ import {
 import { resolveAsyncValue, resolveValue } from '../../utils'
 import { cloneDeep } from 'lodash-es'
 
-export const EditStoreInjectionKeyDefault = 'EditStoreInjection'
+export const EditStoreInjectionKey = Symbol('EditStoreInjection')
 
 export type EditStoreOptions<TFromData, TInitialParams> = {
   /**
@@ -269,7 +269,7 @@ export function useEditStore<
       provide(options.injectionKey, store)
     } else if (options.injectionKey !== false) {
       // Use default injectionKey
-      provide(EditStoreInjectionKeyDefault, store)
+      provide(EditStoreInjectionKey, store)
     }
 
     if (options.initialParams) {
