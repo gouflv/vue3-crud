@@ -1,7 +1,7 @@
 <template>
   <h1>useListStore</h1>
   <p>Initial: {{ initialParams }}</p>
-  <p>Search: {{ search }}</p>
+  <p>Search: {{ search }} - {{ search.name }}</p>
   <p>
     Pagination: {{ pagination }}, index:
     {{ pagination.page }}

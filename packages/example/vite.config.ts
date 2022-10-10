@@ -10,5 +10,8 @@ export default defineConfig({
     Components({
       resolvers: [AntDesignVueResolver()]
     })
-  ]
+  ],
+  server: {
+    port: 3000
+  }
 })
