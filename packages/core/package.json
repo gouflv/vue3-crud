@@ -1,6 +1,6 @@
 {
   "name": "@vue3-crud/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "gouflv <lv.gouf@gmail.com>",
   "license": "ISC",
   "type": "module",
