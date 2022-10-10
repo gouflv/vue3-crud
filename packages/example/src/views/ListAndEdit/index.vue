@@ -25,6 +25,7 @@ const list = reactive(
 )
 
 const { actions: edit } = useEditModalStore({
+  injectionKey: true,
   submitUrl: ({ data, isEdit }) =>
     isEdit ? `/mock/users/${data.id}` : '/mock/users',
   postSubmit: () => list.actions.fetch()
