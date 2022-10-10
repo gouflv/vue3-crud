@@ -71,7 +71,7 @@ export type EditStoreOptions<TFromData, TInitialParams> = {
    * Return additional axios config
    *
    * @example ```ts
-   *   // override submit method
+   *   // override request method
    *   submitConfig: () => ({ method: 'POST' })
    * ```
    */
