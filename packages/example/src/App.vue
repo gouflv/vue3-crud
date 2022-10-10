@@ -11,7 +11,10 @@
         <router-link to="/useEditModalStore">useEditModalStore</router-link>
       </div>
       <div>
-        <router-link to="/list-and-edit">Combine List And Edit</router-link>
+        <router-link to="/ListAndEdit">Combine List And Edit</router-link>
+      </div>
+      <div>
+        <router-link to="/useRemoveStore">useRemoveStore</router-link>
       </div>
       <div><router-link to="/antd-simple">AntVue</router-link></div>
     </nav>

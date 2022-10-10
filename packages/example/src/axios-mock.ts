@@ -61,4 +61,12 @@ export const mockAxios = (axios: AxiosInstance) => {
       data: {}
     }
   ])
+
+  axiosMock.onDelete(/\/api\/mock\/users\/\d+/).reply(() => [
+    200,
+    {
+      code: 0,
+      data: {}
+    }
+  ])
 }
