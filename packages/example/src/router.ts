@@ -17,11 +17,11 @@ const router = createRouter({
     },
     {
       path: '/list-and-edit',
-      component: () => import('./views/list-and-edit/index.vue')
+      component: () => import('./views/ListAndEdit/index.vue')
     },
     {
       path: '/antd-simple',
-      component: () => import('./views/antd-simple/index.vue')
+      component: () => import('./views/AntdSimple/index.vue')
     }
   ]
 })
