@@ -63,7 +63,6 @@ export class RequestService {
   getRequestConfig(config: AxiosRequestConfig): AxiosRequestConfig {
     const defaults: AxiosRequestConfig = {
       baseURL: '/api',
-      timeout: 10_000,
       headers: {
         // token etc.
       }
