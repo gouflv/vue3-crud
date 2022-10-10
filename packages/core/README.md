@@ -8,11 +8,11 @@
 
 ### `useListStore`
 
-### `useEditService`
+### `useEditStore`
 
-### `useEditModalService`
+### `useEditModalStore`
 
-### `useDelete`
+### `useRequest`
 
 ## Service
 
