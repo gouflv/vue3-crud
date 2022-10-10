@@ -251,6 +251,7 @@ export function useEditStore<
 
   const store = {
     data,
+    isEdit,
     loading,
     saving,
     initialParams,
