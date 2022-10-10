@@ -11,9 +11,6 @@ export function useEditModalStore<
   const edit = useEditStore({
     ...options,
 
-    // Abort `useEditStore`'s injection
-    injectionKey: false,
-
     preAction: () => {
       visible.value = true
       options.preAction?.()
@@ -31,7 +28,14 @@ export function useEditModalStore<
     ...edit
   }
 
-  provide(options.injectionKey || EditModalStoreInjectionKey, store)
+  if (options.injectionKey) {
+    provide(
+      typeof options.injectionKey === 'boolean'
+        ? EditModalStoreInjectionKey
+        : options.injectionKey,
+      store
+    )
+  }
 
   return store
 }

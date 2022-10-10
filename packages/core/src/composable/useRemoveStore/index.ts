@@ -31,11 +31,12 @@ export function useRemoveStore<TParams extends PlainObject>(
   }
 
   if (injectionKey) {
-    if (typeof injectionKey === 'boolean') {
-      provide(RemoveStoreInjectionKey, store)
-    } else {
-      provide(injectionKey, store)
-    }
+    provide(
+      typeof injectionKey === 'boolean'
+        ? RemoveStoreInjectionKey
+        : injectionKey,
+      store
+    )
   }
 
   return store

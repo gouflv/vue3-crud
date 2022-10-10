@@ -18,7 +18,7 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
    * Provide `ListStore` to descendants components by `injection` key
    */
-  injectionKey?: false | string | Symbol
+  injectionKey?: boolean | string | Symbol
 
   /**
    * Initial params
@@ -256,15 +256,13 @@ export function useListStore<
   }
 
   async function setup() {
-    if (
-      typeof options.injectionKey === 'string' ||
-      typeof options.injectionKey === 'symbol'
-    ) {
-      // Use injectionKey form options
-      provide(options.injectionKey, store)
-    } else if (options.injectionKey !== false) {
-      // Use default injectionKey
-      provide(ListStoreInjectionKey, store)
+    if (options.injectionKey) {
+      provide(
+        typeof options.injectionKey === 'boolean'
+          ? ListStoreInjectionKey
+          : options.injectionKey,
+        store
+      )
     }
 
     if (options.initialParams) {
