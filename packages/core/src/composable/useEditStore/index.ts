@@ -62,7 +62,7 @@ export type EditStoreOptions<TFromData, TInitialParams> = {
   /**
    * `url` used to submit form data
    */
-  submitUrl: MaybeValueFnWithParams<
+  submitUrl?: MaybeValueFnWithParams<
     string,
     { actionParams: PlainObject; data: TFromData; isEdit: boolean }
   >
@@ -171,6 +171,10 @@ export function useEditStore<
   }
 
   async function onSubmit() {
+    if (!options.submitUrl) {
+      throw new Error('submitUrl is required')
+    }
+
     preSubmit()
     try {
       saving.value = true
