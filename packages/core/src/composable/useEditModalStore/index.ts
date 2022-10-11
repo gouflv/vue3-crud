@@ -9,6 +9,8 @@ export function useEditModalStore<
   TInitialParams extends PlainObject
 >(options: EditStoreOptions<TForm, TInitialParams>) {
   const edit = useEditStore({
+    injectionKey: false,
+
     ...options,
 
     preAction: () => {
