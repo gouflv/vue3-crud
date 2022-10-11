@@ -29,6 +29,7 @@ export function useEditModalStore<
   }
 
   if (options.injectionKey) {
+    console.debug('[useEditModalStore] Injection')
     provide(
       typeof options.injectionKey === 'boolean'
         ? EditModalStoreInjectionKey

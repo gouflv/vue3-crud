@@ -267,6 +267,7 @@ export function useEditStore<
 
   function setup() {
     if (options.injectionKey) {
+      console.debug('[useEditStore] Injection')
       provide(
         typeof options.injectionKey === 'boolean'
           ? EditStoreInjectionKey

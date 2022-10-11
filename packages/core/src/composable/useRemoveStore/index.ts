@@ -31,6 +31,7 @@ export function useRemoveStore<TParams extends PlainObject>(
   }
 
   if (injectionKey) {
+    console.debug('[useRemoveStore] Injection')
     provide(
       typeof injectionKey === 'boolean'
         ? RemoveStoreInjectionKey

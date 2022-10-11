@@ -257,6 +257,7 @@ export function useListStore<
 
   async function setup() {
     if (options.injectionKey) {
+      console.debug('[useListStore] Injection')
       provide(
         typeof options.injectionKey === 'boolean'
           ? ListStoreInjectionKey
