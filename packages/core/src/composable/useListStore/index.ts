@@ -80,6 +80,8 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
    * Default: `true`
    */
   immediate?: boolean
+
+  postFetch?: () => void
 }
 
 export function useListStore<
@@ -147,6 +149,8 @@ export function useListStore<
         size: paginationResponse.size,
         total: paginationResponse.total
       }
+
+      options.postFetch?.()
     } catch (e: any) {
       error.value = e
     } finally {
