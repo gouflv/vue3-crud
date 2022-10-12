@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios'
-import { provide, Ref, ref } from 'vue'
+import { Ref, ref } from 'vue'
 import { ConfigProvider } from '../../configuration/provider'
 import {
   MaybePromiseFnWithParams,
@@ -15,11 +15,6 @@ import { resolveAsyncValue, resolveValue } from '../../utils'
 export const ListStoreInjectionKey = Symbol('ListStoreInjection')
 
 type ListStoreOptions<TItem, TSearch, TInitialParams> = {
-  /**
-   * Provide `ListStore` to descendants components by `injection` key
-   */
-  injectionKey?: boolean | string | Symbol
-
   /**
    * Initial params
    *
@@ -256,20 +251,11 @@ export function useListStore<
       setInitialParams,
       setSearch,
       setPagination
-    }
+    },
+    __injectionKey: ListStoreInjectionKey
   }
 
   async function setup() {
-    if (options.injectionKey) {
-      console.debug('[useListStore] Injection')
-      provide(
-        typeof options.injectionKey === 'boolean'
-          ? ListStoreInjectionKey
-          : options.injectionKey,
-        store
-      )
-    }
-
     if (options.initialParams) {
       initialParams.value = resolveValue(options.initialParams)
     }

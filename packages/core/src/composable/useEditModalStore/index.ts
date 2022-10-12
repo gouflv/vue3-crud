@@ -1,4 +1,4 @@
-import { provide, ref } from 'vue'
+import { ref } from 'vue'
 import { PlainObject } from '../../types'
 import { EditStoreOptions, useEditStore } from '../useEditStore'
 
@@ -9,8 +9,6 @@ export function useEditModalStore<
   TInitialParams extends PlainObject
 >(options: EditStoreOptions<TForm, TInitialParams>) {
   const edit = useEditStore({
-    injectionKey: false,
-
     ...options,
 
     preAction: () => {
@@ -27,17 +25,8 @@ export function useEditModalStore<
 
   const store = {
     visible,
-    ...edit
-  }
-
-  if (options.injectionKey) {
-    console.debug('[useEditModalStore] Injection')
-    provide(
-      typeof options.injectionKey === 'boolean'
-        ? EditModalStoreInjectionKey
-        : options.injectionKey,
-      store
-    )
+    ...edit,
+    __injectionKey: EditModalStoreInjectionKey
   }
 
   return store

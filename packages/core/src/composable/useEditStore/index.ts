@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
-import { provide, Ref, ref } from 'vue'
+import { cloneDeep } from 'lodash-es'
+import { Ref, ref } from 'vue'
 import { ConfigProvider } from '../../configuration/provider'
 import {
   MaybePromiseFnWithParams,
@@ -8,16 +9,10 @@ import {
   PlainObject
 } from '../../types'
 import { resolveAsyncValue, resolveValue } from '../../utils'
-import { cloneDeep } from 'lodash-es'
 
 export const EditStoreInjectionKey = Symbol('EditStoreInjection')
 
 export type EditStoreOptions<TFromData, TInitialParams> = {
-  /**
-   * Provide `EditStore` to descendants components by `injection` key
-   */
-  injectionKey?: boolean | string | Symbol
-
   /**
    * Initial params
    *
@@ -262,20 +257,11 @@ export function useEditStore<
       onEdit,
       onSubmit,
       onReset
-    }
+    },
+    __injectionKey: EditStoreInjectionKey
   }
 
   function setup() {
-    if (options.injectionKey) {
-      console.debug('[useEditStore] Injection')
-      provide(
-        typeof options.injectionKey === 'boolean'
-          ? EditStoreInjectionKey
-          : options.injectionKey,
-        store
-      )
-    }
-
     if (options.initialParams) {
       initialParams.value = resolveValue(options.initialParams, null)
     }
