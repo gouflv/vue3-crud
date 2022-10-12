@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { useEditModalStore, useListStore } from '@vue3-crud/core'
+import { useEditModalStore, useListStore, withInjection } from '@vue3-crud/core'
 import { reactive } from 'vue'
 import Edit from './edit.vue'
 
@@ -24,10 +24,11 @@ const list = reactive(
   })
 )
 
-const { actions: edit } = useEditModalStore({
-  injectionKey: true,
-  submitUrl: ({ data, isEdit }) =>
-    isEdit ? `/mock/users/${data.id}` : '/mock/users',
-  postSubmit: () => list.actions.fetch()
-})
+const { actions: edit } = withInjection(
+  useEditModalStore({
+    submitUrl: ({ data, isEdit }) =>
+      isEdit ? `/mock/users/${data.id}` : '/mock/users',
+    postSubmit: () => list.actions.fetch()
+  })
+)
 </script>
