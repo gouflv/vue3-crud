@@ -1,3 +1,8 @@
+## 1.3.0 (2022-10-14)
+
+- feat: add `useModalStore`
+- refactor: typing InjectionKey
+
 ## 1.2.0 (2022-10-12)
 
 - feat: add `makeInjectable`
