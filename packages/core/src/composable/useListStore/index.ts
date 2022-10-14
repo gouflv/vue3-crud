@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios'
-import { Ref, ref } from 'vue'
+import { InjectionKey, Ref, ref } from 'vue'
 import { ConfigProvider } from '../../configuration/provider'
 import {
   MaybePromiseFnWithParams,
@@ -12,9 +12,7 @@ import {
 } from '../../types'
 import { resolveAsyncValue, resolveValue } from '../../utils'
 
-export const ListStoreInjectionKey = Symbol('ListStoreInjection')
-
-type ListStoreOptions<TItem, TSearch, TInitialParams> = {
+type UseListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
    * Initial params
    *
@@ -79,11 +77,33 @@ type ListStoreOptions<TItem, TSearch, TInitialParams> = {
   postFetch?: () => void
 }
 
+export type UseListStoreReturn<TItem, TSearch, TInitialParams> = {
+  data: Ref<PageData<TItem>>
+  loading: Ref<boolean>
+  initialParams: Ref<TInitialParams>
+  pagination: Ref<PaginationQuery>
+  search: Ref<TSearch>
+  actions: {
+    fetch: () => void
+    setInitialParams: (initialParams: TInitialParams) => void
+    setSearch: (search: TSearch) => void
+    setPagination: (
+      value: MaybeValueFnWithParams<Partial<PaginationQuery>, PaginationQuery>
+    ) => void
+  }
+}
+
+export const ListStoreInjectionKey = Symbol(
+  'ListStoreInjection'
+) as InjectionKey<UseListStoreReturn<PlainObject, PlainObject, PlainObject>>
+
 export function useListStore<
   TItem extends PlainObject,
   TSearch extends PlainObject,
   TInitialParams extends PlainObject
->(options: ListStoreOptions<TItem, TSearch, TInitialParams>) {
+>(
+  options: UseListStoreOptions<TItem, TSearch, TInitialParams>
+): UseListStoreReturn<TItem, TSearch, TInitialParams> {
   const { requestService: request } = ConfigProvider.config
 
   const initialParams = ref({}) as Ref<TInitialParams>
@@ -278,5 +298,3 @@ export function useListStore<
 
   return store
 }
-
-export type UseListStoreReturn = ReturnType<typeof useListStore>

@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
-import { cloneDeep } from 'lodash-es'
-import { Ref, ref } from 'vue'
+import { cloneDeep, isElement } from 'lodash-es'
+import { InjectionKey, Ref, ref } from 'vue'
 import { ConfigProvider } from '../../configuration/provider'
 import {
   MaybePromiseFnWithParams,
@@ -9,8 +9,6 @@ import {
   PlainObject
 } from '../../types'
 import { resolveAsyncValue, resolveValue } from '../../utils'
-
-export const EditStoreInjectionKey = Symbol('EditStoreInjection')
 
 export type EditStoreOptions<TFromData, TInitialParams> = {
   /**
@@ -87,10 +85,32 @@ export type EditStoreOptions<TFromData, TInitialParams> = {
   postSubmit?: (response: any) => void
 }
 
+export type UseEditStoreReturn<TFormData, TInitialParams> = {
+  data: Ref<TFormData>
+  isEdit: Ref<boolean>
+  loading: Ref<boolean>
+  saving: Ref<boolean>
+  initialParams: Ref<TInitialParams>
+  actionParams: Ref<PlainObject>
+  actions: {
+    setInitialParams: (params: TInitialParams) => void
+    onAdd: (params?: PlainObject) => void
+    onEdit: (params: PlainObject) => void
+    onSubmit: () => void
+    onReset: () => void
+  }
+}
+
+export const EditStoreInjectionKey = Symbol(
+  'EditStoreInjection'
+) as InjectionKey<UseEditStoreReturn<any, any>>
+
 export function useEditStore<
   TFromData extends PlainObject,
   TInitialParams extends PlainObject
->(options: EditStoreOptions<TFromData, TInitialParams>) {
+>(
+  options: EditStoreOptions<TFromData, TInitialParams>
+): UseEditStoreReturn<TFromData, TInitialParams> {
   const { requestService: request } = ConfigProvider.config
 
   const initialParams = ref({}) as Ref<TInitialParams>
@@ -271,5 +291,3 @@ export function useEditStore<
 
   return store
 }
-
-export type UseEditStoreReturn = ReturnType<typeof useEditStore>

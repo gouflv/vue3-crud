@@ -1,35 +1,45 @@
-import { ref } from 'vue'
+import { InjectionKey, Ref } from 'vue'
 import { PlainObject } from '../../types'
-import { EditStoreOptions, useEditStore } from '../useEditStore'
+import {
+  EditStoreOptions,
+  useEditStore,
+  UseEditStoreReturn
+} from '../useEditStore'
+import { useModalStore } from '../useModalStore'
 
-export const EditModalStoreInjectionKey = Symbol('EditModalStoreInjection')
+export type UseEditModalStoreReturn = UseEditStoreReturn<any, any> & {
+  visible: Ref<boolean>
+}
+
+export const EditModalStoreInjectionKey = Symbol(
+  'EditModalStoreInjection'
+) as InjectionKey<UseEditModalStoreReturn>
 
 export function useEditModalStore<
-  TForm extends PlainObject,
+  TFormData extends PlainObject,
   TInitialParams extends PlainObject
->(options: EditStoreOptions<TForm, TInitialParams>) {
-  const edit = useEditStore({
+>(
+  options: EditStoreOptions<TFormData, TInitialParams>
+): UseEditModalStoreReturn {
+  const { actions: modalActions, visible } = useModalStore()
+  const edit = useEditStore<TFormData, TInitialParams>({
     ...options,
 
     preAction: () => {
-      visible.value = true
+      modalActions.open()
       options.preAction?.()
     },
     postSubmit: (response) => {
-      visible.value = false
+      modalActions.close()
       options.postSubmit?.(response)
     }
   })
 
-  const visible = ref(false)
-
   const store = {
-    visible,
     ...edit,
+    visible,
     __injectionKey: EditModalStoreInjectionKey
   }
 
   return store
 }
-
-export type UseEditModalStoreReturn = ReturnType<typeof useEditModalStore>
