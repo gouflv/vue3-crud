@@ -1,3 +1,7 @@
+## 1.3.2 (2022-10-17)
+
+- types: use any as default generic for compositions
+
 ## 1.3.0 (2022-10-14)
 
 - feat: add `useModalStore`
