@@ -9,7 +9,13 @@
 </template>
 
 <script setup lang="ts">
-import { EditModalStoreInjectionKey, useInjection } from '@vue3-crud/core'
+import {
+  EditModalStoreInjectionKey,
+  UseEditModalStoreReturn,
+  useInjection
+} from '@vue3-crud/core'
 
-const { visible, data, actions } = useInjection(EditModalStoreInjectionKey)
+const { visible, data, actions } = useInjection<UseEditModalStoreReturn>(
+  EditModalStoreInjectionKey
+)
 </script>
