@@ -1,5 +1,4 @@
 import { InjectionKey, Ref } from 'vue'
-import { PlainObject } from '../../../types'
 import {
   EditStoreOptions,
   useEditStore,
@@ -7,7 +6,10 @@ import {
 } from '../useEditStore'
 import { useModalStore } from '../useModalStore'
 
-export type UseEditModalStoreReturn = UseEditStoreReturn<any, any> & {
+export type UseEditModalStoreReturn<
+  TFormData = any,
+  TInitialParams = any
+> = UseEditStoreReturn<TFormData, TInitialParams> & {
   visible: Ref<boolean>
 }
 
@@ -15,12 +17,9 @@ export const EditModalStoreInjectionKey = Symbol(
   'EditModalStoreInjection'
 ) as InjectionKey<UseEditModalStoreReturn>
 
-export function useEditModalStore<
-  TFormData extends PlainObject,
-  TInitialParams extends PlainObject
->(
+export function useEditModalStore<TFormData = any, TInitialParams = any>(
   options: EditStoreOptions<TFormData, TInitialParams>
-): UseEditModalStoreReturn {
+): UseEditModalStoreReturn<TFormData, TInitialParams> {
   const { actions: modalActions, visible } = useModalStore()
   const edit = useEditStore<TFormData, TInitialParams>({
     ...options,

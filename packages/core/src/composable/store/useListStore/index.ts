@@ -77,7 +77,11 @@ type UseListStoreOptions<TItem, TSearch, TInitialParams> = {
   postFetch?: () => void
 }
 
-export type UseListStoreReturn<TItem, TSearch, TInitialParams> = {
+export type UseListStoreReturn<
+  TItem = any,
+  TSearch = any,
+  TInitialParams = any
+> = {
   data: Ref<PageData<TItem>>
   loading: Ref<boolean>
   initialParams: Ref<TInitialParams>
@@ -96,13 +100,9 @@ export type UseListStoreReturn<TItem, TSearch, TInitialParams> = {
 
 export const ListStoreInjectionKey = Symbol(
   'ListStoreInjection'
-) as InjectionKey<UseListStoreReturn<PlainObject, PlainObject, PlainObject>>
+) as InjectionKey<UseListStoreReturn>
 
-export function useListStore<
-  TItem extends PlainObject,
-  TSearch extends PlainObject,
-  TInitialParams extends PlainObject
->(
+export function useListStore<TItem = any, TSearch = any, TInitialParams = any>(
   options: UseListStoreOptions<TItem, TSearch, TInitialParams>
 ): UseListStoreReturn<TItem, TSearch, TInitialParams> {
   const { requestService: request } = ConfigProvider.config

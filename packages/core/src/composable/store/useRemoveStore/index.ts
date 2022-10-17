@@ -1,27 +1,26 @@
 import { InjectionKey, Ref } from 'vue'
-import { PlainObject } from '../../../types'
 import { resolveValue } from '../../../utils'
 import { useRequest, UseRequestOptions } from '../../useRequest'
 
 export type UseRemoveStoreOptions<TParams> = UseRequestOptions<TParams> & {}
 
-export type UseRemoveStoreReturn<TParams> = {
+export type UseRemoveStoreReturn<TParams = any> = {
   loading: Ref<boolean>
   remove: (params: TParams) => Promise<void>
 }
 
 export const RemoveStoreInjectionKey = Symbol(
   'RemoveStoreInjection'
-) as InjectionKey<UseRemoveStoreReturn<any>>
+) as InjectionKey<UseRemoveStoreReturn>
 
-export function useRemoveStore<TParams extends PlainObject>(
+export function useRemoveStore<TParams = any>(
   options: UseRemoveStoreOptions<TParams>
 ): UseRemoveStoreReturn<TParams> {
   const { requestConfig, ...restUseRequestOptions } = options
 
   const { loading, send } = useRequest({
-    requestConfig: (args) => {
-      const config = requestConfig ?? resolveValue(requestConfig, args)
+    requestConfig: ({ params }) => {
+      const config = requestConfig ?? resolveValue(requestConfig, { params })
       return {
         method: 'DELETE',
         ...config

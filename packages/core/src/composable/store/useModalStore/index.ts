@@ -1,12 +1,12 @@
 import { InjectionKey, Ref, ref } from 'vue'
-import { MaybeValueFn, PlainObject } from '../../../types'
+import { MaybeValueFn } from '../../../types'
 import { resolveValue } from '../../../utils'
 
 export type UseModalStoreOptions<TInitialParams> = {
   initialParams?: MaybeValueFn<TInitialParams>
 }
 
-export type UseModalStoreReturn<TParams, TInitialParams> = {
+export type UseModalStoreReturn<TParams = any, TInitialParams = any> = {
   visible: Ref<boolean>
   initialParams: Ref<TInitialParams>
   params: Ref<TParams | undefined>
@@ -21,10 +21,7 @@ export const ModalStoreInjectionKey = Symbol(
   'ModalStoreInjection'
 ) as InjectionKey<UseModalStoreReturn<any, any>>
 
-export function useModalStore<
-  TParams extends PlainObject,
-  TInitialParams extends PlainObject
->(
+export function useModalStore<TParams = any, TInitialParams = any>(
   options?: UseModalStoreOptions<TInitialParams>
 ): UseModalStoreReturn<TParams, TInitialParams> {
   const initialParams = ref(

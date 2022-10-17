@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios'
-import { cloneDeep, isElement } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import { InjectionKey, Ref, ref } from 'vue'
 import { ConfigProvider } from '../../../configuration/provider'
 import {
@@ -85,7 +85,7 @@ export type EditStoreOptions<TFromData, TInitialParams> = {
   postSubmit?: (response: any) => void
 }
 
-export type UseEditStoreReturn<TFormData, TInitialParams> = {
+export type UseEditStoreReturn<TFormData = any, TInitialParams = any> = {
   data: Ref<TFormData>
   isEdit: Ref<boolean>
   loading: Ref<boolean>
@@ -104,12 +104,9 @@ export type UseEditStoreReturn<TFormData, TInitialParams> = {
 
 export const EditStoreInjectionKey = Symbol(
   'EditStoreInjection'
-) as InjectionKey<UseEditStoreReturn<any, any>>
+) as InjectionKey<UseEditStoreReturn>
 
-export function useEditStore<
-  TFromData extends PlainObject,
-  TInitialParams extends PlainObject
->(
+export function useEditStore<TFromData = any, TInitialParams = any>(
   options: EditStoreOptions<TFromData, TInitialParams>
 ): UseEditStoreReturn<TFromData, TInitialParams> {
   const { requestService: request } = ConfigProvider.config

@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from 'axios'
 import { ref } from 'vue'
 import { ConfigProvider } from '../../configuration/provider'
-import { MaybeValueFnWithParams, PlainObject } from '../../types'
+import { MaybeValueFnWithParams } from '../../types'
 import { resolveValue } from '../../utils'
 
 export type UseRequestOptions<TParams> = {
@@ -31,9 +31,7 @@ export type UseRequestOptions<TParams> = {
   postRequest?: (response: any) => void
 }
 
-export function useRequest<TParams extends PlainObject>(
-  options: UseRequestOptions<TParams>
-) {
+export function useRequest<TParams = any>(options: UseRequestOptions<TParams>) {
   const { requestService: request } = ConfigProvider.config
 
   const loading = ref(false)
