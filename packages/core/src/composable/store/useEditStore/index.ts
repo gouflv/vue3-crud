@@ -1,14 +1,14 @@
 import { AxiosRequestConfig } from 'axios'
 import { cloneDeep, isElement } from 'lodash-es'
 import { InjectionKey, Ref, ref } from 'vue'
-import { ConfigProvider } from '../../configuration/provider'
+import { ConfigProvider } from '../../../configuration/provider'
 import {
   MaybePromiseFnWithParams,
   MaybeValueFn,
   MaybeValueFnWithParams,
   PlainObject
-} from '../../types'
-import { resolveAsyncValue, resolveValue } from '../../utils'
+} from '../../../types'
+import { resolveAsyncValue, resolveValue } from '../../../utils'
 
 export type EditStoreOptions<TFromData, TInitialParams> = {
   /**
@@ -99,6 +99,7 @@ export type UseEditStoreReturn<TFormData, TInitialParams> = {
     onSubmit: () => void
     onReset: () => void
   }
+  __injectionKey: string | Symbol
 }
 
 export const EditStoreInjectionKey = Symbol(

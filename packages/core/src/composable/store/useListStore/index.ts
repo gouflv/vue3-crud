@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 import { InjectionKey, Ref, ref } from 'vue'
-import { ConfigProvider } from '../../configuration/provider'
+import { ConfigProvider } from '../../../configuration/provider'
 import {
   MaybePromiseFnWithParams,
   MaybeValueFn,
@@ -9,8 +9,8 @@ import {
   PaginationQuery,
   PaginationResponse,
   PlainObject
-} from '../../types'
-import { resolveAsyncValue, resolveValue } from '../../utils'
+} from '../../../types'
+import { resolveAsyncValue, resolveValue } from '../../../utils'
 
 type UseListStoreOptions<TItem, TSearch, TInitialParams> = {
   /**
@@ -91,6 +91,7 @@ export type UseListStoreReturn<TItem, TSearch, TInitialParams> = {
       value: MaybeValueFnWithParams<Partial<PaginationQuery>, PaginationQuery>
     ) => void
   }
+  __injectionKey: string | Symbol
 }
 
 export const ListStoreInjectionKey = Symbol(

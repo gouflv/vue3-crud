@@ -1,6 +1,6 @@
 import { InjectionKey, Ref, ref } from 'vue'
-import { MaybeValueFn, PlainObject } from '../../types'
-import { resolveValue } from '../../utils'
+import { MaybeValueFn, PlainObject } from '../../../types'
+import { resolveValue } from '../../../utils'
 
 export type UseModalStoreOptions<TInitialParams> = {
   initialParams?: MaybeValueFn<TInitialParams>
@@ -14,6 +14,7 @@ export type UseModalStoreReturn<TParams, TInitialParams> = {
     open: (params?: TParams) => void
     close: () => void
   }
+  __injectionKey: string | Symbol
 }
 
 export const ModalStoreInjectionKey = Symbol(
@@ -50,6 +51,7 @@ export function useModalStore<
     actions: {
       open,
       close
-    }
+    },
+    __injectionKey: ModalStoreInjectionKey
   }
 }

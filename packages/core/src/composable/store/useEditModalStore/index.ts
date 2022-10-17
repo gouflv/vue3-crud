@@ -1,5 +1,5 @@
 import { InjectionKey, Ref } from 'vue'
-import { PlainObject } from '../../types'
+import { PlainObject } from '../../../types'
 import {
   EditStoreOptions,
   useEditStore,
