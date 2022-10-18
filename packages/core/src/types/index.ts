@@ -1,7 +1,7 @@
 export * from './request'
 export * from './list'
 
-export type PlainObject = Record<string, string | number | boolean | object>
+export type PlainObject = Record<string, any>
 
 export type ReturnValueFn<R> = () => R
 export type ReturnValueFnWithParams<R, P> = (params: P) => R

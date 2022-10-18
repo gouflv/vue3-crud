@@ -10,7 +10,7 @@ import {
 } from '../../../types'
 import { resolveAsyncValue, resolveValue } from '../../../utils'
 
-export type EditStoreOptions<TFromData, TInitialParams> = {
+export type UseEditStoreOptions<TFromData, TInitialParams> = {
   /**
    * Initial params
    *
@@ -108,7 +108,7 @@ export const EditStoreInjectionKey = Symbol(
 ) as InjectionKey<UseEditStoreReturn>
 
 export function useEditStore<TFromData = any, TInitialParams = any>(
-  options: EditStoreOptions<TFromData, TInitialParams>
+  options: UseEditStoreOptions<TFromData, TInitialParams>
 ) {
   const { requestService: request } = ConfigProvider.config
 

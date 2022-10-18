@@ -1,6 +1,6 @@
 import { InjectionKey, Ref } from 'vue'
 import {
-  EditStoreOptions,
+  UseEditStoreOptions,
   useEditStore,
   UseEditStoreReturn
 } from '../useEditStore'
@@ -18,7 +18,7 @@ export const EditModalStoreInjectionKey = Symbol(
 ) as InjectionKey<UseEditModalStoreReturn>
 
 export function useEditModalStore<TFormData = any, TInitialParams = any>(
-  options: EditStoreOptions<TFormData, TInitialParams>
+  options: UseEditStoreOptions<TFormData, TInitialParams>
 ): UseEditModalStoreReturn<TFormData, TInitialParams> {
   const { actions: modalActions, visible } = useModalStore()
   const edit = useEditStore<TFormData, TInitialParams>({
