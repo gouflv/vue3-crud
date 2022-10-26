@@ -90,7 +90,7 @@ export type UseEditStoreReturn<TFormData = any, TInitialParams = any> = {
   isEdit: Ref<boolean>
   loading: Ref<boolean>
   saving: Ref<boolean>
-  error: Ref<Error>
+  error: Ref<Error | undefined>
   initialParams: Ref<TInitialParams>
   actionParams: Ref<PlainObject>
   actions: {

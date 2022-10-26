@@ -84,7 +84,7 @@ export type UseListStoreReturn<
 > = {
   data: Ref<PageData<TItem>>
   loading: Ref<boolean>
-  error: Ref<Error>
+  error: Ref<Error | undefined>
   initialParams: Ref<TInitialParams>
   pagination: Ref<PaginationQuery>
   search: Ref<TSearch>
