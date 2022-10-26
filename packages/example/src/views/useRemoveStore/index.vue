@@ -2,9 +2,7 @@
   <p>
     <button @click="() => remove({ id: 1 })">Remove</button>
   </p>
-  <p>
-    {{ loading }}
-  </p>
+  <p>loading: {{ loading }}</p>
 </template>
 
 <script setup lang="ts">

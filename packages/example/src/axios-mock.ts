@@ -5,8 +5,7 @@ export let axiosMock: MockAdapter | null = null
 
 export const mockAxios = (axios: AxiosInstance) => {
   axiosMock = new MockAdapter(axios, {
-    delayResponse: 500,
-    onNoMatch: 'passthrough'
+    delayResponse: 500
   })
 
   let id = 1
