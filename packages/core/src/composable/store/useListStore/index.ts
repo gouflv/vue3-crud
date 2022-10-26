@@ -84,6 +84,7 @@ export type UseListStoreReturn<
 > = {
   data: Ref<PageData<TItem>>
   loading: Ref<boolean>
+  error: Ref<Error>
   initialParams: Ref<TInitialParams>
   pagination: Ref<PaginationQuery>
   search: Ref<TSearch>
@@ -104,7 +105,7 @@ export const ListStoreInjectionKey = Symbol(
 
 export function useListStore<TItem = any, TSearch = any, TInitialParams = any>(
   options: UseListStoreOptions<TItem, TSearch, TInitialParams>
-): UseListStoreReturn<TItem, TSearch, TInitialParams> {
+) {
   const { requestService: request } = ConfigProvider.config
 
   const initialParams = ref({}) as Ref<TInitialParams>
@@ -168,6 +169,7 @@ export function useListStore<TItem = any, TSearch = any, TInitialParams = any>(
 
       options.postFetch?.()
     } catch (e: any) {
+      console.error('[useListStore] Fetch error', e)
       error.value = e
     } finally {
       loading.value = false
@@ -261,12 +263,13 @@ export function useListStore<TItem = any, TSearch = any, TInitialParams = any>(
     fetch()
   }
 
-  const store = {
+  const store: UseListStoreReturn<TItem, TSearch, TInitialParams> = {
     data,
     loading,
     initialParams,
     pagination,
     search,
+    error,
     actions: {
       fetch,
       setInitialParams,

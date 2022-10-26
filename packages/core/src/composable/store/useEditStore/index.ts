@@ -90,6 +90,7 @@ export type UseEditStoreReturn<TFormData = any, TInitialParams = any> = {
   isEdit: Ref<boolean>
   loading: Ref<boolean>
   saving: Ref<boolean>
+  error: Ref<Error>
   initialParams: Ref<TInitialParams>
   actionParams: Ref<PlainObject>
   actions: {
@@ -108,7 +109,7 @@ export const EditStoreInjectionKey = Symbol(
 
 export function useEditStore<TFromData = any, TInitialParams = any>(
   options: EditStoreOptions<TFromData, TInitialParams>
-): UseEditStoreReturn<TFromData, TInitialParams> {
+) {
   const { requestService: request } = ConfigProvider.config
 
   const initialParams = ref({}) as Ref<TInitialParams>
@@ -122,6 +123,8 @@ export function useEditStore<TFromData = any, TInitialParams = any>(
   const loading = ref(false)
 
   const saving = ref(false)
+
+  const error = ref<Error>()
 
   const submitResponse = ref<any>()
 
@@ -145,9 +148,9 @@ export function useEditStore<TFromData = any, TInitialParams = any>(
       loading.value = true
       actionParams.value = params ?? {}
       data.value = await getDefaultFormData()
-    } catch (error) {
-      // TODO: handle error
-      console.error(error)
+    } catch (e) {
+      console.error('[useEditStore] onAdd error', e)
+      error.value = e as Error
     } finally {
       loading.value = false
     }
@@ -165,9 +168,9 @@ export function useEditStore<TFromData = any, TInitialParams = any>(
       loading.value = true
       actionParams.value = params ?? {}
       data.value = await fetchFormData()
-    } catch (error) {
-      // TODO: handle error
-      console.error(error)
+    } catch (e) {
+      console.error('[useEditStore] onEdit error', e)
+      error.value = e as Error
     } finally {
       loading.value = false
     }
@@ -215,9 +218,9 @@ export function useEditStore<TFromData = any, TInitialParams = any>(
         ...defaultConfig,
         ...options.submitConfig?.()
       })
-    } catch (error) {
-      // TODO handle error
-      console.error(error)
+    } catch (e) {
+      console.error('[useEditStore] onSubmit error', e)
+      error.value = e as Error
     } finally {
       saving.value = false
       options.postSubmit?.(submitResponse.value)
@@ -262,11 +265,12 @@ export function useEditStore<TFromData = any, TInitialParams = any>(
     initialParams.value = params
   }
 
-  const store = {
+  const store: UseEditStoreReturn<TFromData, TInitialParams> = {
     data,
     isEdit,
     loading,
     saving,
+    error,
     initialParams,
     actionParams,
     actions: {

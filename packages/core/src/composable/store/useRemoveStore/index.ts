@@ -18,7 +18,7 @@ export function useRemoveStore<TParams = any>(
 ): UseRemoveStoreReturn<TParams> {
   const { requestConfig, ...restUseRequestOptions } = options
 
-  const { loading, send } = useRequest({
+  const { loading, error, send } = useRequest({
     requestConfig: ({ params }) => {
       const config = requestConfig ?? resolveValue(requestConfig, { params })
       return {
@@ -31,6 +31,7 @@ export function useRemoveStore<TParams = any>(
 
   const store = {
     loading,
+    error,
     remove: send,
     __injectionKey: RemoveStoreInjectionKey
   }

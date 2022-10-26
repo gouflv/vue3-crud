@@ -36,7 +36,7 @@ export function useRequest<TParams = any>(options: UseRequestOptions<TParams>) {
 
   const loading = ref(false)
 
-  const finish = ref(false)
+  const error = ref<Error>()
 
   const abortController = ref<AbortController>()
 
@@ -59,8 +59,6 @@ export function useRequest<TParams = any>(options: UseRequestOptions<TParams>) {
 
       loading.value = true
 
-      finish.value = false
-
       const url = resolveValue(options.url, { params })
 
       const config = resolveValue(options.requestConfig, { params })
@@ -70,12 +68,10 @@ export function useRequest<TParams = any>(options: UseRequestOptions<TParams>) {
         ...config
       })
 
-      finish.value = true
-
       post(response)
-    } catch (error) {
-      // TODO handle error
-      console.error(error)
+    } catch (e) {
+      console.error('[useRequest] Request error', e)
+      error.value = e as Error
     } finally {
       loading.value = false
     }
@@ -83,6 +79,7 @@ export function useRequest<TParams = any>(options: UseRequestOptions<TParams>) {
 
   return {
     loading,
+    error,
     send
   }
 }
