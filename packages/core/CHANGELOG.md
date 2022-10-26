@@ -1,3 +1,7 @@
+## 1.3.3 (2022-10-26)
+
+- feat: request error handler
+
 ## 1.3.2 (2022-10-17)
 
 - types: use any as default generic for compositions
