@@ -34,8 +34,6 @@ export class RequestService {
       console.error('[RequestService] Request error', e)
 
       this.requestErrorHandler(e as AxiosError)
-
-      throw e
     }
   }
 
@@ -80,12 +78,20 @@ export class RequestService {
    *   normalizeResponse(response) {
    *     return { data: response }
    *   }
+   *
+   *   // rename response field
+   *   normalizeResponse(response) {
+   *    return { data: response.data, message: response.msg }
+   *   }
    * ```
    */
   normalizeResponse<T>(response: any): ResponseWrapper<T> {
     return response
   }
 
+  /**
+   * Return `data` field of `ResponseWrapper`
+   */
   unwrapResponse<T>(responseWrapper: ResponseWrapper<T>) {
     return responseWrapper.data as UnwrappedResponse<T>
   }
@@ -95,7 +101,15 @@ export class RequestService {
 
     // Ignore error if request is canceled
     if (error.name === 'CanceledError') {
-      return
+      ;(error as any).__handled = true
+      throw error
+    }
+
+    let hasHandled = false
+
+    function showErrorMessage(message: string) {
+      messageService.open({ type: 'error', content: message })
+      hasHandled = true
     }
 
     if (error.isAxiosError) {
@@ -104,25 +118,31 @@ export class RequestService {
         // The request was made and the server responded with a status code
 
         if (this.isAuthFailed(response)) {
+          showErrorMessage('登录过期')
           this.onAuthFailed(error)
-          return
+        } else {
+          const responseWrapper = this.normalizeResponse(response.data)
+          showErrorMessage(responseWrapper?.message || '服务繁忙')
         }
-
-        // TODO show error message in `response.data`
-        messageService.open({ type: 'error', content: '服务繁忙' })
       } else if (request) {
         // The request was made but no response was received
 
-        messageService.open({ type: 'error', content: '网络异常' })
+        showErrorMessage('网络异常')
       } else {
         // Internal error
 
-        messageService.open({ type: 'error', content: error.message })
+        showErrorMessage(error.message)
       }
-      return
+    } else {
+      // Unknown error
+      showErrorMessage(error.message)
     }
 
-    messageService.open({ type: 'error', content: error.message })
+    if (hasHandled) {
+      ;(error as any).__handled = true
+    }
+
+    throw error
   }
 
   isAuthFailed(response: AxiosResponse) {
@@ -136,4 +156,8 @@ export class RequestService {
   onAuthFailed(error: AxiosError) {
     console.error('[RequestService] Should implement `onAuthFailed`', error)
   }
+}
+
+export function isUnhandledRequestError(error: Error) {
+  return !(error as any).__handled
 }
