@@ -1,6 +1,7 @@
 import { AxiosRequestConfig } from 'axios'
 import { InjectionKey, Ref, ref } from 'vue'
 import { ConfigProvider } from '../../../configuration/provider'
+import { isUnhandledRequestError } from '../../../services'
 import {
   MaybePromiseFnWithParams,
   MaybeValueFn,
@@ -169,8 +170,10 @@ export function useListStore<TItem = any, TSearch = any, TInitialParams = any>(
 
       options.postFetch?.()
     } catch (e: any) {
-      console.error('[useListStore] Fetch error', e)
-      error.value = e
+      if (isUnhandledRequestError(e)) {
+        console.error('[useListStore] Fetch error', e)
+        error.value = e
+      }
     } finally {
       loading.value = false
     }

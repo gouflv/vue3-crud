@@ -2,6 +2,7 @@ import { AxiosRequestConfig } from 'axios'
 import { cloneDeep } from 'lodash-es'
 import { InjectionKey, Ref, ref } from 'vue'
 import { ConfigProvider } from '../../../configuration/provider'
+import { isUnhandledRequestError } from '../../../services'
 import {
   MaybePromiseFnWithParams,
   MaybeValueFn,
@@ -148,9 +149,11 @@ export function useEditStore<TFromData = any, TInitialParams = any>(
       loading.value = true
       actionParams.value = params ?? {}
       data.value = await getDefaultFormData()
-    } catch (e) {
-      console.error('[useEditStore] onAdd error', e)
-      error.value = e as Error
+    } catch (e: any) {
+      if (isUnhandledRequestError(e)) {
+        console.error('[useEditStore] onAdd error', e)
+        error.value = e as Error
+      }
     } finally {
       loading.value = false
     }

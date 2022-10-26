@@ -1,6 +1,7 @@
 import { AxiosRequestConfig } from 'axios'
 import { ref } from 'vue'
 import { ConfigProvider } from '../../configuration/provider'
+import { isUnhandledRequestError } from '../../services'
 import { MaybeValueFnWithParams } from '../../types'
 import { resolveValue } from '../../utils'
 
@@ -69,9 +70,11 @@ export function useRequest<TParams = any>(options: UseRequestOptions<TParams>) {
       })
 
       post(response)
-    } catch (e) {
-      console.error('[useRequest] Request error', e)
-      error.value = e as Error
+    } catch (e: any) {
+      if (isUnhandledRequestError(e)) {
+        console.error('[useRequest] Request error', e)
+        error.value = e as Error
+      }
     } finally {
       loading.value = false
     }
