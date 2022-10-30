@@ -30,8 +30,8 @@ export class RequestService {
       console.debug('[RequestService] Response data', result)
 
       return result
-    } catch (e) {
-      console.error('[RequestService] Request error', e)
+    } catch (e: any) {
+      console.error('[RequestService] Request error', e.message)
 
       this.requestErrorHandler(e as AxiosError)
     }
@@ -154,7 +154,10 @@ export class RequestService {
    * Implement in subclass
    */
   onAuthFailed(error: AxiosError) {
-    console.error('[RequestService] Should implement `onAuthFailed`', error)
+    console.error(
+      '[RequestService] Should implement `onAuthFailed`',
+      error.message
+    )
   }
 }
 

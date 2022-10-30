@@ -171,9 +171,11 @@ export function useEditStore<TFromData = any, TInitialParams = any>(
       loading.value = true
       actionParams.value = params ?? {}
       data.value = await fetchFormData()
-    } catch (e) {
-      console.error('[useEditStore] onEdit error', e)
-      error.value = e as Error
+    } catch (e: any) {
+      if (isUnhandledRequestError(e)) {
+        console.error('[useEditStore] onEdit error', e)
+        error.value = e as Error
+      }
     } finally {
       loading.value = false
     }
@@ -221,9 +223,11 @@ export function useEditStore<TFromData = any, TInitialParams = any>(
         ...defaultConfig,
         ...options.submitConfig?.()
       })
-    } catch (e) {
-      console.error('[useEditStore] onSubmit error', e)
-      error.value = e as Error
+    } catch (e: any) {
+      if (isUnhandledRequestError(e)) {
+        console.error('[useEditStore] onSubmit error', e)
+        error.value = e as Error
+      }
     } finally {
       saving.value = false
       options.postSubmit?.(submitResponse.value)
