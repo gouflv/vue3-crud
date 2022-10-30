@@ -1,4 +1,8 @@
-## 1.3.3 (2022-10-26)
+## 1.3.5 (2022-10-30)
+
+- feat: better error message
+
+## 1.3.4 (2022-10-26)
 
 - feat: request error handler
 
